@@ -1,0 +1,20 @@
+# Secrets
+.env
+app/.env
+
+# Dépendances
+node_modules/
+app/node_modules/
+
+# Build & cache Strapi
+app/.tmp/
+app/dist/
+app/build/
+app/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
