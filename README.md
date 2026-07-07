@@ -6,6 +6,8 @@ ingénierie frontend (framework maison), et pilotage (appels d'offres, risques,
 recette).
 
 # Structure du projet
+
+```text
 GENERATEUR-PORTFOLIO/
 ├── .github/
 │   └── workflows/
@@ -40,3 +42,4 @@ GENERATEUR-PORTFOLIO/
 │   └── site-etudiant3/
 ├── package.json                      # npm workspaces (racine)
 └── README.md
+```
