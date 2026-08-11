@@ -1,4 +1,12 @@
+import BrowserLink from "../vanilla-engine/src/router/link.js";
+
 export default () => ({
-  type: "h1",
-  children: ["Page 404"],
+  type: "div",
+  children: [
+    {
+      type: "h1",
+      children: ["Page 404"],
+    },
+    BrowserLink("/", "Retour à l'accueil"),
+  ],
 });

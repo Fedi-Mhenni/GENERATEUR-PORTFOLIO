@@ -1,4 +1,5 @@
 import { getProjets } from "../services/strapi-api.js";
+import BrowserLink from "../vanilla-engine/src/router/link.js";
 
 export default async function ProjetsPage() {
   const projets = await getProjets();
@@ -6,6 +7,7 @@ export default async function ProjetsPage() {
   return {
     type: "div",
     children: [
+      BrowserLink("/", "← Retour à l'accueil"),
       {
         type: "h1",
         children: ["Mes projets"],
