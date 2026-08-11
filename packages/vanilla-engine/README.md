@@ -17,9 +17,26 @@ tel quel sur un serveur de production.
 - `src/core/generate-structure.js` — moteur de rendu (objet → DOM réel)
 - `src/prototypes/string-interpolate.js` — (placeholder) méthode `String.interpolate` (extension de prototype à implémenter)
 - `src/state/` — gestion d'état réactive : `createStore(initialState)` → `getState()`, `setState(update)`, `subscribe(callback)` (implémenté avec `EventTarget`/`CustomEvent` natifs)
-- `src/validation/` — réservé pour la validation des props de composants (à venir)
+- `src/validation/` — validation des props de composants : `validateProps(props, schema)` → `{ valid, errors, props }` (voir "Validation des props" ci-dessous)
 - `src/components/` — réservé pour les composants réutilisables partagés (à venir)
-- `tests/` — tests du framework (`node:test`) : `create-store.test.js` couvre `src/state/`
+- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`)
+
+## Validation des props
+
+`validateProps(props, schema)` vérifie un objet `props` par rapport à un
+`schema` (`{ clé: { type, required, default } }`) et retourne
+`{ valid, errors, props }` — `props` est l'objet reçu complété avec les
+valeurs `default` du schema pour les clés absentes. Convention du framework :
+les composants reçoivent un **objet props nommé** (ex. `Carte({ titre,
+image, lien })`), pas des arguments positionnels — seul `BrowserLink` fait
+exception (2 paramètres simples, non concerné).
+
+```js
+import validateProps from "../validation/index.js";
+
+const schema = { titre: { type: "string", required: true } };
+const { valid, errors, props } = validateProps({ titre: "Mon projet" }, schema);
+```
 
 ## Utilisation en développement
 
