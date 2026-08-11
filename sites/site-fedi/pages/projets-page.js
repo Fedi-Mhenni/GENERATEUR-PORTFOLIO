@@ -17,7 +17,7 @@ export default async function ProjetsPage() {
         children: projets.length > 0
           ? projets.map((projet) => ({
               type: "li",
-              children: [projet.titre],
+              children: [projet.attributes?.titre ?? projet.titre],
             }))
           : [{ type: "li", children: ["Aucun projet trouvé"] }],
       },

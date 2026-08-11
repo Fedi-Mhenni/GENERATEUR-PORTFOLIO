@@ -15,7 +15,7 @@ tel quel sur un serveur de production.
   des pages asynchrones, seule modification par rapport au framework fourni)
 - `src/router/link.js` — composant de navigation
 - `src/core/generate-structure.js` — moteur de rendu (objet → DOM réel)
-- `src/prototypes/string-interpolate.js` — méthode `String.interpolate` (prototype natif)
+- `src/prototypes/string-interpolate.js` — (placeholder) méthode `String.interpolate` (extension de prototype à implémenter)
 - `src/state/` — réservé pour le state management (à venir)
 - `src/validation/` — réservé pour la validation des props de composants (à venir)
 - `src/components/` — réservé pour les composants réutilisables partagés (à venir)
