@@ -15,11 +15,28 @@ tel quel sur un serveur de production.
   des pages asynchrones, seule modification par rapport au framework fourni)
 - `src/router/link.js` — composant de navigation
 - `src/core/generate-structure.js` — moteur de rendu (objet → DOM réel)
-- `src/prototypes/string-interpolate.js` — (placeholder) méthode `String.interpolate` (extension de prototype à implémenter)
+- `src/prototypes/string-interpolate.js` — `String.prototype.interpolate(data)` : remplace les `{{ placeholders }}` d'une chaîne par les valeurs de `data` (voir "Interpolation de chaînes" ci-dessous)
 - `src/state/` — gestion d'état réactive : `createStore(initialState)` → `getState()`, `setState(update)`, `subscribe(callback)` (implémenté avec `EventTarget`/`CustomEvent` natifs)
 - `src/validation/` — validation des props de composants : `validateProps(props, schema)` → `{ valid, errors, props }` (voir "Validation des props" ci-dessous)
 - `src/components/` — composants réutilisables : seul `Carte({ titre, image, description, lien })` existe pour l'instant (les 7 autres composants du backlog — header, footer, navigation, listes, pagination, éléments d'expérience, formulaire — sont reportés faute de page ou de donnée réelle les justifiant aujourd'hui)
-- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`)
+- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`), `string-interpolate.test.js` (`src/prototypes/`)
+
+## Interpolation de chaînes
+
+`src/prototypes/string-interpolate.js` ajoute `interpolate(data)` à
+`String.prototype` (extension de prototype natif, pas un export classique —
+il suffit d'importer le fichier une fois pour que la méthode soit
+disponible sur toutes les chaînes). Remplace les `{{ placeholders }}` par
+la valeur correspondante dans `data`, avec support des chemins imbriqués
+(`{{ a.b.c }}`). Une clé manquante à n'importe quel niveau — ou `data`
+lui-même `undefined`/`null` — donne une chaîne vide, jamais une exception.
+
+```js
+import "../prototypes/string-interpolate.js";
+
+"Bonjour {{ user.name }}".interpolate({ user: { name: "Fedi" } });
+// -> "Bonjour Fedi"
+```
 
 ## Validation des props
 
