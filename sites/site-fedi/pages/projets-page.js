@@ -1,5 +1,6 @@
 import { getProjets } from "../services/strapi-api.js";
 import BrowserLink from "../vanilla-engine/src/router/link.js";
+import Carte from "../vanilla-engine/src/components/carte.js";
 
 export default async function ProjetsPage() {
   const projets = await getProjets();
@@ -15,10 +16,14 @@ export default async function ProjetsPage() {
       {
         type: "ul",
         children: projets.length > 0
-          ? projets.map((projet) => ({
-              type: "li",
-              children: [projet.attributes?.titre ?? projet.titre],
-            }))
+          ? projets.map((projet) =>
+              Carte({
+                titre: projet.attributes?.titre ?? projet.titre,
+                image: projet.image?.url ?? "",
+                description: projet.description,
+                lien: `/projets/${projet.slug}`,
+              }),
+            )
           : [{ type: "li", children: ["Aucun projet trouvé"] }],
       },
     ],
