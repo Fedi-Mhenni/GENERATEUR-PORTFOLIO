@@ -19,7 +19,8 @@ tel quel sur un serveur de production.
 - `src/state/` — gestion d'état réactive : `createStore(initialState)` → `getState()`, `setState(update)`, `subscribe(callback)` (implémenté avec `EventTarget`/`CustomEvent` natifs)
 - `src/validation/` — validation des props de composants : `validateProps(props, schema)` → `{ valid, errors, props }` (voir "Validation des props" ci-dessous)
 - `src/components/` — composants réutilisables : seul `Carte({ titre, image, description, lien })` existe pour l'instant (les 7 autres composants du backlog — header, footer, navigation, listes, pagination, éléments d'expérience, formulaire — sont reportés faute de page ou de donnée réelle les justifiant aujourd'hui)
-- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`), `string-interpolate.test.js` (`src/prototypes/`)
+- `src/utils/` — utilitaires génériques partagés : `resolveImageUrl(url, origin)` (voir "Résolution d'URL de médias" ci-dessous)
+- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`), `string-interpolate.test.js` (`src/prototypes/`), `resolve-url.test.js` (`src/utils/`)
 
 ## Interpolation de chaînes
 
@@ -53,6 +54,33 @@ import validateProps from "../validation/index.js";
 
 const schema = { titre: { type: "string", required: true } };
 const { valid, errors, props } = validateProps({ titre: "Mon projet" }, schema);
+```
+
+## Résolution d'URL de médias
+
+`resolveImageUrl(url, origin)` (`src/utils/resolve-url.js`) préfixe une URL
+relative avec une origine — utile parce que Strapi (et les CMS headless en
+général) renvoie des URLs **relatives** pour les médias hébergés localement
+(ex. `image.url = "/uploads/xxx.png"`), qui sinon se résolvent par rapport à
+l'origine du **site** qui les affiche au lieu du **CMS** qui les héberge
+réellement (image cassée).
+
+**Cette fonction ne connaît et ne devine aucune origine par défaut** — elle
+est volontairement pure et générique (vraie pour n'importe quelle instance
+Strapi), donc réutilisable telle quelle par `site-azer` et `site-ayjing`
+avec *leur propre* backend. L'origine précise (ex. `http://localhost:1337`)
+n'est déclarée que dans le `config.js` de chaque site, jamais dans le
+framework.
+
+```js
+import resolveImageUrl from "../utils/resolve-url.js";
+import config from "../../config.js"; // propre à chaque site
+
+resolveImageUrl("/uploads/photo.png", config.STRAPI_ORIGIN);
+// -> "http://localhost:1337/uploads/photo.png" (avec l'origine de CE site)
+
+resolveImageUrl("https://cdn.exemple.com/photo.png", config.STRAPI_ORIGIN);
+// -> inchangée (déjà absolue, ex. CDN externe prévu au Lot 3)
 ```
 
 ## Utilisation en développement
