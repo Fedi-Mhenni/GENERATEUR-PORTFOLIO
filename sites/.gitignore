@@ -1,0 +1,5 @@
+# Lien symbolique local vers packages/vanilla-engine, recréé par chaque
+# étudiant après clone (voir sites/README.md "Mise en place initiale").
+# Ne doit jamais être committé : cassé sur les systèmes sans support
+# symlink (ex. Windows sans core.symlinks).
+*/vanilla-engine

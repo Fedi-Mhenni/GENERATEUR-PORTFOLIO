@@ -1,4 +1,4 @@
-import generateStructure from "../../lib/generate-structure.js";
+import generateStructure from "../core/generate-structure.js";
 
 export default function BrowserRouter(rootElement, routes) {
   async function refreshPage() {
