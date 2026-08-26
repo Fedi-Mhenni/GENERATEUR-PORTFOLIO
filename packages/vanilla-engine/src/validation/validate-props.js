@@ -3,7 +3,7 @@ export default function validateProps(props, schema) {
   const finalProps = { ...props };
 
   for (let [key, rule] of Object.entries(schema)) {
-    const hasValue = props[key] !== undefined;
+    const hasValue = props[key] !== undefined && props[key] !== null;
 
     if (!hasValue) {
       if (rule.required) {
