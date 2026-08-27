@@ -441,6 +441,67 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCompetenceCompetence extends Struct.CollectionTypeSchema {
+  collectionName: 'competences';
+  info: {
+    displayName: 'Competence';
+    pluralName: 'competences';
+    singularName: 'competence';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    categorie: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::competence.competence'
+    > &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiExperienceExperience extends Struct.CollectionTypeSchema {
+  collectionName: 'experiences';
+  info: {
+    displayName: 'Experience';
+    pluralName: 'experiences';
+    singularName: 'experience';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dateDebut: Schema.Attribute.Date;
+    dateFin: Schema.Attribute.Date;
+    description: Schema.Attribute.Text;
+    entreprise: Schema.Attribute.String;
+    intitule: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::experience.experience'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProfilProfil extends Struct.SingleTypeSchema {
   collectionName: 'profils';
   info: {
@@ -1023,6 +1084,8 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::competence.competence': ApiCompetenceCompetence;
+      'api::experience.experience': ApiExperienceExperience;
       'api::profil.profil': ApiProfilProfil;
       'api::projet.projet': ApiProjetProjet;
       'plugin::content-releases.release': PluginContentReleasesRelease;
