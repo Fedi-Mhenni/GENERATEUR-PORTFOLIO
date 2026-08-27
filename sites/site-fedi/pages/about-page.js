@@ -1,0 +1,77 @@
+import { getProfil, getCompetences } from "../services/strapi-api.js";
+import BrowserLink from "../vanilla-engine/src/router/link.js";
+import resolveImageUrl from "../vanilla-engine/src/utils/resolve-url.js";
+import config from "../config.js";
+
+// Lien externe (média Strapi, réseau social, mailto) : navigation réelle du
+// navigateur, contrairement à BrowserLink qui intercepte le clic pour le
+// routeur SPA ne convient pas ici (pushState refuse une URL cross-origin).
+function externalLink(url, label) {
+  return {
+    type: "a",
+    attributes: [
+      ["href", url],
+      ["target", "_blank"],
+    ],
+    children: [label],
+  };
+}
+
+export default async function AboutPage() {
+  const profil = await getProfil();
+  const competences = await getCompetences();
+
+  return {
+    type: "div",
+    children: [
+      BrowserLink("/", "← Retour à l'accueil"),
+      {
+        type: "h1",
+        children: ["À propos"],
+      },
+      profil
+        ? {
+            type: "div",
+            children: [
+              { type: "h2", children: [profil.titre ?? ""] },
+              {
+                type: "img",
+                attributes: [
+                  ["src", resolveImageUrl(profil.photo?.url, config.STRAPI_ORIGIN)],
+                  ["alt", profil.titre ?? ""],
+                ],
+              },
+              { type: "p", children: [profil.introduction ?? ""] },
+              { type: "p", children: [profil.biographie ?? ""] },
+              ...(profil.cv
+                ? [
+                    externalLink(
+                      resolveImageUrl(profil.cv.url, config.STRAPI_ORIGIN),
+                      "Télécharger le CV",
+                    ),
+                  ]
+                : []),
+              ...(profil.linkedin ? [externalLink(profil.linkedin, "LinkedIn")] : []),
+              ...(profil.github ? [externalLink(profil.github, "GitHub")] : []),
+              ...(profil.email
+                ? [externalLink(`mailto:${profil.email}`, profil.email)]
+                : []),
+            ],
+          }
+        : { type: "p", children: ["Profil non renseigné."] },
+      {
+        type: "h2",
+        children: ["Compétences"],
+      },
+      {
+        type: "ul",
+        children: competences.length > 0
+          ? competences.map((competence) => ({
+              type: "li",
+              children: [`${competence.nom} — ${competence.categorie}`],
+            }))
+          : [{ type: "li", children: ["Aucune compétence renseignée"] }],
+      },
+    ],
+  };
+}
