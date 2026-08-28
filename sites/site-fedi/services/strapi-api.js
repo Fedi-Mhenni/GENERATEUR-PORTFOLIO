@@ -17,3 +17,11 @@ export async function getCompetences() {
   const json = await response.json();
   return json.data;
 }
+
+export async function getProjetBySlug(slug) {
+  const response = await fetch(
+    `${config.API_URL}/projets?filters[slug][$eq]=${slug}&populate=image`,
+  );
+  const json = await response.json();
+  return json.data[0] ?? null;
+}
