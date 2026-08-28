@@ -154,3 +154,15 @@ test("pattern/minLength absents du schema -> aucun impact (non-régression)", ()
 
   assert.equal(result.valid, true);
 });
+
+test("pattern/minLength sur une valeur non-string -> pas d'erreur redondante due à la coercion (seule l'erreur de type remonte)", () => {
+  // Sans le garde-fou typeof, RegExp.test(42) coercerait 42 en "42" : ça ne
+  // matche pas le pattern email, donc une 2e erreur "format" apparaîtrait en
+  // plus de l'erreur de type — redondant et dépendant d'une coercion
+  // accidentelle plutôt que de la vraie donnée.
+  const result = validateProps({ email: 42, message: "1234567890" }, formSchema);
+
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.length, 1);
+  assert.ok(result.errors.includes("email doit être un string, reçu number"));
+});

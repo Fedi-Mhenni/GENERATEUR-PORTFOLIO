@@ -16,7 +16,11 @@ export default async function ProjetsPage() {
         children: ["Mes projets"],
       },
       {
-        type: "ul",
+        // Carte() retourne un "div" (carte-projet) — un wrapper "ul" serait
+        // du HTML invalide (un <ul> ne doit contenir que des <li>). Carte est
+        // un composant de grille/carte, pas un item de liste : "div" est la
+        // structure cohérente, pas <li><div>...</div></li>.
+        type: "div",
         children: projets.length > 0
           ? projets.map((projet) =>
               Carte({
@@ -26,7 +30,7 @@ export default async function ProjetsPage() {
                 lien: `/projets/${projet.slug}`,
               }),
             )
-          : [{ type: "li", children: ["Aucun projet trouvé"] }],
+          : [{ type: "p", children: ["Aucun projet trouvé"] }],
       },
     ],
   };

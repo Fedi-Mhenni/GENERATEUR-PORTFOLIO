@@ -12,13 +12,18 @@ function externalLink(url, label) {
     attributes: [
       ["href", url],
       ["target", "_blank"],
+      ["rel", "noopener noreferrer"],
     ],
     children: [label],
   };
 }
 
 export default async function AboutPage() {
-  const profil = await getProfil();
+  const profilData = await getProfil();
+  // Cohérence avec le fallback déjà utilisé dans projets-page.js
+  // (projet.attributes?.titre ?? projet.titre) — normalisé une seule fois
+  // ici plutôt que répété par champ, Strapi 5 renvoie déjà le format à plat.
+  const profil = profilData?.attributes ?? profilData;
   const competences = await getCompetences();
 
   return {

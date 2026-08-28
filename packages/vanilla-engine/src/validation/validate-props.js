@@ -22,12 +22,20 @@ export default function validateProps(props, schema) {
       }
     }
 
-    if (rule.pattern && !rule.pattern.test(props[key])) {
-      errors.push(`${key} ne respecte pas le format attendu`);
-    }
+    // pattern/minLength supposent une string : sans ce garde-fou, un array
+    // (qui a aussi .length) ou un objet/nombre (coercé en chaîne par
+    // RegExp.test) pourrait silencieusement passer ou échouer ces
+    // vérifications sans rapport avec la vraie valeur — pas un crash, mais
+    // un résultat trompeur. La vérification "type" reste seule responsable
+    // de signaler l'erreur pour une valeur mal typée.
+    if (typeof props[key] === "string") {
+      if (rule.pattern && !rule.pattern.test(props[key])) {
+        errors.push(`${key} ne respecte pas le format attendu`);
+      }
 
-    if (rule.minLength && props[key].length < rule.minLength) {
-      errors.push(`${key} doit contenir au moins ${rule.minLength} caractères`);
+      if (rule.minLength && props[key].length < rule.minLength) {
+        errors.push(`${key} doit contenir au moins ${rule.minLength} caractères`);
+      }
     }
   }
 

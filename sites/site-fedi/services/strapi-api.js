@@ -20,7 +20,7 @@ export async function getCompetences() {
 
 export async function getProjetBySlug(slug) {
   const response = await fetch(
-    `${config.API_URL}/projets?filters[slug][$eq]=${slug}&populate=image`,
+    `${config.API_URL}/projets?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=image`,
   );
   const json = await response.json();
   return json.data[0] ?? null;
