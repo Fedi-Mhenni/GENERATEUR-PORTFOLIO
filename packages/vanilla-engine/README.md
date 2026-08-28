@@ -42,12 +42,15 @@ import "../prototypes/string-interpolate.js";
 ## Validation des props
 
 `validateProps(props, schema)` vérifie un objet `props` par rapport à un
-`schema` (`{ clé: { type, required, default } }`) et retourne
-`{ valid, errors, props }` — `props` est l'objet reçu complété avec les
-valeurs `default` du schema pour les clés absentes. Convention du framework :
-les composants reçoivent un **objet props nommé** (ex. `Carte({ titre,
-image, lien })`), pas des arguments positionnels — seul `BrowserLink` fait
-exception (2 paramètres simples, non concerné).
+`schema` (`{ clé: { type, required, default, pattern, minLength } }`) et
+retourne `{ valid, errors, props }` — `props` est l'objet reçu complété avec
+les valeurs `default` du schema pour les clés absentes. `pattern` (une
+`RegExp`) et `minLength` (un nombre) sont optionnels, en plus de
+`type`/`required`/`default` — utiles pour valider un format (email) ou une
+longueur minimale (message d'un formulaire), sans dépendance externe.
+Convention du framework : les composants reçoivent un **objet props nommé**
+(ex. `Carte({ titre, image, lien })`), pas des arguments positionnels —
+seul `BrowserLink` fait exception (2 paramètres simples, non concerné).
 
 ```js
 import validateProps from "../validation/index.js";

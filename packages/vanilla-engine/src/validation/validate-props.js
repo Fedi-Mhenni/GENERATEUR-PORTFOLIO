@@ -4,8 +4,9 @@ export default function validateProps(props, schema) {
 
   for (let [key, rule] of Object.entries(schema)) {
     const hasValue = props[key] !== undefined && props[key] !== null;
+    const isEmptyRequired = rule.required && props[key] === "";
 
-    if (!hasValue) {
+    if (!hasValue || isEmptyRequired) {
       if (rule.required) {
         errors.push(`${key} est requis`);
       } else if ("default" in rule) {
@@ -19,6 +20,14 @@ export default function validateProps(props, schema) {
       if (actualType !== rule.type) {
         errors.push(`${key} doit être un ${rule.type}, reçu ${actualType}`);
       }
+    }
+
+    if (rule.pattern && !rule.pattern.test(props[key])) {
+      errors.push(`${key} ne respecte pas le format attendu`);
+    }
+
+    if (rule.minLength && props[key].length < rule.minLength) {
+      errors.push(`${key} doit contenir au moins ${rule.minLength} caractères`);
     }
   }
 
