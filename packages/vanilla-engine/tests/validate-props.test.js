@@ -51,6 +51,20 @@ test("plusieurs erreurs simultanées (requise manquante + mauvais type) -> les d
   assert.ok(result.errors.includes("featured doit être un boolean, reçu string"));
 });
 
+test("une prop requise valant null -> traitée comme absente, valid: false", () => {
+  const result = validateProps({ titre: null }, schema);
+
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.includes("titre est requis"));
+});
+
+test("une prop optionnelle valant null -> complétée avec sa valeur default", () => {
+  const result = validateProps({ titre: "Mon projet", featured: null }, schema);
+
+  assert.equal(result.valid, true);
+  assert.equal(result.props.featured, false);
+});
+
 test("une prop hors schema -> présente dans le résultat, sans erreur", () => {
   const result = validateProps(
     { titre: "Mon projet", extra: "valeur libre" },
