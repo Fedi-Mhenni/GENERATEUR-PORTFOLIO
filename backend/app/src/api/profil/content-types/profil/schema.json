@@ -11,9 +11,19 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "titre": {
+    "nom": {
       "type": "string",
       "required": true
+    },
+    "prenom": {
+      "type": "string",
+      "required": true
+    },
+    "poste": {
+      "type": "string"
+    },
+    "ecole": {
+      "type": "string"
     },
     "introduction": {
       "type": "text"

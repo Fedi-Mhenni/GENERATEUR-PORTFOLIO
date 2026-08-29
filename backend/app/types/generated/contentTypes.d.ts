@@ -502,6 +502,39 @@ export interface ApiExperienceExperience extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiJourneyJourney extends Struct.CollectionTypeSchema {
+  collectionName: 'journeys';
+  info: {
+    displayName: 'Journey';
+    pluralName: 'journeys';
+    singularName: 'journey';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    cursus: Schema.Attribute.String;
+    date_debut: Schema.Attribute.Date;
+    date_fin: Schema.Attribute.Date;
+    ecole: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::journey.journey'
+    > &
+      Schema.Attribute.Private;
+    pays: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    ville: Schema.Attribute.String;
+  };
+}
+
 export interface ApiProfilProfil extends Struct.SingleTypeSchema {
   collectionName: 'profils';
   info: {
@@ -518,6 +551,7 @@ export interface ApiProfilProfil extends Struct.SingleTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     cv: Schema.Attribute.Media<'files'>;
+    ecole: Schema.Attribute.String;
     email: Schema.Attribute.String;
     github: Schema.Attribute.String;
     introduction: Schema.Attribute.Text;
@@ -528,9 +562,11 @@ export interface ApiProfilProfil extends Struct.SingleTypeSchema {
       'api::profil.profil'
     > &
       Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
     photo: Schema.Attribute.Media<'images'>;
+    poste: Schema.Attribute.String;
+    prenom: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    titre: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -562,6 +598,7 @@ export interface ApiProjetProjet extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID;
+    soustitre: Schema.Attribute.Text;
     statut: Schema.Attribute.Enumeration<
       ['brouillon', 'pret_a_relire', 'publie', 'archive']
     > &
@@ -1086,6 +1123,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::competence.competence': ApiCompetenceCompetence;
       'api::experience.experience': ApiExperienceExperience;
+      'api::journey.journey': ApiJourneyJourney;
       'api::profil.profil': ApiProfilProfil;
       'api::projet.projet': ApiProjetProjet;
       'plugin::content-releases.release': PluginContentReleasesRelease;
