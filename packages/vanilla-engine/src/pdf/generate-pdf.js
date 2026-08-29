@@ -4,15 +4,21 @@ const schema = {
   filename: { type: "string", required: false, default: "document.pdf" },
 };
 
-export default function generatePdf(element, options) {
+export default async function generatePdf(element, options) {
   const { valid, errors, props } = validateProps(options, schema);
 
   if (!valid) {
-    return Promise.resolve({ success: false, errors });
+    return { success: false, errors };
   }
 
-  return globalThis.html2pdf(element, { filename: props.filename }).then(() => ({
-    success: true,
-    errors: [],
-  }));
+  if (typeof globalThis.html2pdf !== "function") {
+    return { success: false, errors: ["html2pdf.js n'est pas chargé (globalThis.html2pdf est absent)"] };
+  }
+
+  try {
+    await globalThis.html2pdf(element, { filename: props.filename });
+    return { success: true, errors: [] };
+  } catch (error) {
+    return { success: false, errors: [error.message] };
+  }
 }

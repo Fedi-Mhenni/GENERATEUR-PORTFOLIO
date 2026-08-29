@@ -65,3 +65,27 @@ test("html2pdf résout -> success: true, errors: []", async () => {
   assert.equal(result.success, true);
   assert.deepEqual(result.errors, []);
 });
+
+test("html2pdf absent (globalThis.html2pdf n'est pas une fonction) -> success: false, sans planter", async () => {
+  const originalHtml2pdf = globalThis.html2pdf;
+  globalThis.html2pdf = undefined;
+
+  const result = await generatePdf(element, { filename: "cv-azer.pdf" });
+
+  globalThis.html2pdf = originalHtml2pdf;
+
+  assert.equal(result.success, false);
+  assert.ok(result.errors[0].includes("html2pdf.js n'est pas chargé"));
+});
+
+test("html2pdf rejette -> success: false avec l'erreur, au lieu de la laisser remonter", async () => {
+  const originalHtml2pdf = globalThis.html2pdf;
+  globalThis.html2pdf = () => Promise.reject(new Error("échec du rendu canvas"));
+
+  const result = await generatePdf(element, { filename: "cv-azer.pdf" });
+
+  globalThis.html2pdf = originalHtml2pdf;
+
+  assert.equal(result.success, false);
+  assert.deepEqual(result.errors, ["échec du rendu canvas"]);
+});
