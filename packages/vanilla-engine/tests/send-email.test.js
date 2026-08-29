@@ -67,3 +67,15 @@ test("réponse fetch non-ok -> success: false avec une erreur explicite incluant
   assert.equal(result.success, false);
   assert.ok(result.errors[0].includes("400"));
 });
+
+test("fetch rejette (réseau coupé, DNS, timeout) -> success: false, sans planter", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = () => Promise.reject(new Error("network error"));
+
+  const result = await sendEmail(validFormData, config);
+
+  globalThis.fetch = originalFetch;
+
+  assert.equal(result.success, false);
+  assert.deepEqual(result.errors, ["network error"]);
+});

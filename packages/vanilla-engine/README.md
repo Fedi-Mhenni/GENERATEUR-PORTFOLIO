@@ -55,6 +55,26 @@ const schema = { titre: { type: "string", required: true } };
 const { valid, errors, props } = validateProps({ titre: "Mon projet" }, schema);
 ```
 
+## Envoi d'email (EmailService)
+
+`sendEmail(formData, config)` (`src/email/send-email.js`) envoie un email
+via l'API REST d'EmailJS (appel `fetch` direct, aucun SDK). `config` porte
+les identifiants EmailJS (`serviceId`, `templateId`, `publicKey`), fournis
+par le site appelant.
+
+**Répartition de la validation** : `sendEmail` ne vérifie que la
+**présence** des champs requis (`nom`, `email`, `message` — schema minimal,
+sans `pattern` ni `minLength`). C'est un garde-fou de dernier recours pour
+le service partagé, pas la validation métier complète. Le détail des règles
+(format d'email valide, longueur minimale du message, etc.) reste à la
+charge du formulaire appelant (voir `sites/site-fedi/pages/contact-page.js`,
+qui applique ces règles plus fines avant même d'appeler `sendEmail`). Ça
+évite de dupliquer la même logique de validation à deux endroits.
+
+Si l'appel réseau échoue (déconnexion, DNS, timeout) ou si l'API répond une
+erreur, `sendEmail` retourne `{ success: false, errors }` — jamais
+d'exception non gérée.
+
 ## Utilisation en développement
 
 Ce package n'est pas consommé directement à sa racine — chaque site (dans
