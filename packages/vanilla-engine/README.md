@@ -18,7 +18,7 @@ tel quel sur un serveur de production.
 - `src/prototypes/string-interpolate.js` — `String.prototype.interpolate(data)` : remplace les `{{ placeholders }}` d'une chaîne par les valeurs de `data` (voir "Interpolation de chaînes" ci-dessous)
 - `src/state/` — gestion d'état réactive : `createStore(initialState)` → `getState()`, `setState(update)`, `subscribe(callback)` (implémenté avec `EventTarget`/`CustomEvent` natifs)
 - `src/validation/` — validation des props de composants : `validateProps(props, schema)` → `{ valid, errors, props }` (voir "Validation des props" ci-dessous)
-- `src/components/` — composants réutilisables : seul `Carte({ titre, image, description, lien })` existe pour l'instant (les 7 autres composants du backlog — header, footer, navigation, listes, pagination, éléments d'expérience, formulaire — sont reportés faute de page ou de donnée réelle les justifiant aujourd'hui)
+- `src/components/` — composants réutilisables : seul `Carte({ titre, soustitre, image, description, lien })` existe pour l'instant (`soustitre` optionnel, `default: ""`) — les 7 autres composants du backlog (header, footer, navigation, listes, pagination, éléments d'expérience, formulaire) sont reportés faute de page ou de donnée réelle les justifiant aujourd'hui
 - `src/utils/` — utilitaires génériques partagés : `resolveImageUrl(url, origin)` (voir "Résolution d'URL de médias" ci-dessous)
 - `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`), `string-interpolate.test.js` (`src/prototypes/`), `resolve-url.test.js` (`src/utils/`)
 

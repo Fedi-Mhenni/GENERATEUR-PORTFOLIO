@@ -25,6 +25,7 @@ export default async function ProjetsPage() {
           ? projets.map((projet) =>
               Carte({
                 titre: projet.attributes?.titre ?? projet.titre,
+                soustitre: projet.soustitre,
                 image: resolveImageUrl(projet.image?.url, config.STRAPI_ORIGIN),
                 description: projet.description,
                 lien: `/projets/${projet.slug}`,
