@@ -24,6 +24,11 @@ export default async function AboutPage() {
   // (projet.attributes?.titre ?? projet.titre) — normalisé une seule fois
   // ici plutôt que répété par champ, Strapi 5 renvoie déjà le format à plat.
   const profil = profilData?.attributes ?? profilData;
+  // "titre" a été remplacé par "nom"/"prenom" côté Strapi (profil.titre
+  // n'existe plus). poste/ecole sont de nouveaux champs, affichés en
+  // sous-titre — absents de la maquette précédente, seulement s'ils existent.
+  const nomComplet = `${profil?.prenom ?? ""} ${profil?.nom ?? ""}`.trim();
+  const posteEtEcole = [profil?.poste, profil?.ecole].filter(Boolean).join(", ");
   const competences = await getCompetences();
 
   return {
@@ -38,12 +43,13 @@ export default async function AboutPage() {
         ? {
             type: "div",
             children: [
-              { type: "h2", children: [profil.titre ?? ""] },
+              { type: "h2", children: [nomComplet] },
+              ...(posteEtEcole ? [{ type: "p", children: [posteEtEcole] }] : []),
               {
                 type: "img",
                 attributes: [
                   ["src", resolveImageUrl(profil.photo?.url, config.STRAPI_ORIGIN)],
-                  ["alt", profil.titre ?? ""],
+                  ["alt", nomComplet],
                 ],
               },
               { type: "p", children: [profil.introduction ?? ""] },
