@@ -44,6 +44,12 @@
         "publie",
         "archive"
       ]
+    },
+    "technos": {
+      "type": "string"
+    },
+    "lienGithub": {
+      "type": "string"
     }
   }
 }
