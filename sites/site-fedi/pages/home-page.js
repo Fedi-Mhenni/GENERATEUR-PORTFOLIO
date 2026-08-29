@@ -8,5 +8,7 @@ export default () => ({
       children: ["Bienvenue sur mon portfolio"],
     },
     BrowserLink("/projets", "Voir mes projets"),
+    BrowserLink("/a-propos", "À propos"),
+    BrowserLink("/contact", "Contact"),
   ],
 });

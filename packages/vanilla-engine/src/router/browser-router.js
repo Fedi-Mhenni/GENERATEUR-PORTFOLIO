@@ -1,10 +1,40 @@
 import generateStructure from "../core/generate-structure.js";
 
+export function matchRoute(routes, pathname) {
+  const pathParts = pathname.split("/");
+
+  for (const pattern in routes) {
+    if (pattern === "*") {
+      continue;
+    }
+
+    const patternParts = pattern.split("/");
+    if (patternParts.length !== pathParts.length) {
+      continue;
+    }
+
+    const params = {};
+    const isMatch = patternParts.every((part, i) => {
+      if (part.startsWith(":")) {
+        params[part.slice(1)] = pathParts[i];
+        return true;
+      }
+      return part === pathParts[i];
+    });
+
+    if (isMatch) {
+      return { generator: routes[pattern], params };
+    }
+  }
+
+  return { generator: routes["*"], params: {} };
+}
+
 export default function BrowserRouter(rootElement, routes) {
   async function refreshPage() {
     const pathname = window.location.pathname;
-    const generator = routes[pathname] ?? routes["*"];
-    const structure = await generator();
+    const { generator, params } = matchRoute(routes, pathname);
+    const structure = await generator(params);
 
     if (rootElement.childNodes[0]) {
       rootElement.replaceChild(
