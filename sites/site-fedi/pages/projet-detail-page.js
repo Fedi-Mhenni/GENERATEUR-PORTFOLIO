@@ -19,6 +19,9 @@ export default async function ProjetDetailPage(params) {
             type: "div",
             children: [
               { type: "h1", children: [projet.titre ?? ""] },
+              ...(projet.soustitre
+                ? [{ type: "p", children: [projet.soustitre] }]
+                : []),
               {
                 type: "img",
                 attributes: [
