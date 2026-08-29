@@ -1,7 +1,9 @@
 import config from "../config.js";
 
 export async function getProjets() {
-  const response = await fetch(`${config.API_URL}/projets?populate=image`);
+  const response = await fetch(
+    `${config.API_URL}/projets?populate=image&filters[statut][$eq]=publie`,
+  );
   const json = await response.json();
   return json.data;
 }
@@ -20,7 +22,7 @@ export async function getCompetences() {
 
 export async function getProjetBySlug(slug) {
   const response = await fetch(
-    `${config.API_URL}/projets?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=image`,
+    `${config.API_URL}/projets?filters[slug][$eq]=${encodeURIComponent(slug)}&filters[statut][$eq]=publie&populate=image`,
   );
   const json = await response.json();
   return json.data[0] ?? null;
