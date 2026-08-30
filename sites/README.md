@@ -7,7 +7,7 @@ Chaque site consomme le framework partagé situé dans `packages/vanilla-engine/
 (voir son README pour le détail du framework lui-même).
 
 ## Structure attendue par site
-
+```
 sites/site-<prenom>/
 ├── index.html
 ├── index.js
@@ -16,6 +16,7 @@ sites/site-<prenom>/
 ├── pages/
 ├── routes/
 └── services/
+```
 
 ## Mise en place initiale (une seule fois, après avoir cloné le repo)
 

@@ -1,0 +1,65 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #172033;
+  background: #f5f7fb;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  box-sizing: border-box;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.profile-header,
+.content-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 0.25rem 1rem rgb(23 32 51 / 8%);
+}
+
+.profile-photo {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-role {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.profile-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.content-list {
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.content-list li {
+  padding: 1rem;
+  border-left: 0.25rem solid #4f46e5;
+  background: #f8fafc;
+}
+
+.content-list h3,
+.content-list p {
+  margin: 0.25rem 0;
+}
+
+.error {
+  color: #991b1b;
+}
