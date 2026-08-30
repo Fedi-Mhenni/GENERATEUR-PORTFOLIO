@@ -551,12 +551,14 @@ export interface ApiProfilProfil extends Struct.SingleTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     cv: Schema.Attribute.Media<'files'>;
+    disponibilite: Schema.Attribute.Boolean;
     ecole: Schema.Attribute.String;
     email: Schema.Attribute.String;
     github: Schema.Attribute.String;
     introduction: Schema.Attribute.Text;
     linkedin: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::profil.profil'
@@ -590,6 +592,7 @@ export interface ApiProjetProjet extends Struct.CollectionTypeSchema {
     date: Schema.Attribute.Date;
     description: Schema.Attribute.Text;
     image: Schema.Attribute.Media<'images'>;
+    lienGithub: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -603,6 +606,7 @@ export interface ApiProjetProjet extends Struct.CollectionTypeSchema {
       ['brouillon', 'pret_a_relire', 'publie', 'archive']
     > &
       Schema.Attribute.DefaultTo<'brouillon'>;
+    technos: Schema.Attribute.String;
     titre: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

@@ -53,6 +53,12 @@
     },
     "email": {
       "type": "string"
+    },
+    "localisation": {
+      "type": "string"
+    },
+    "disponibilite": {
+      "type": "boolean"
     }
   }
 }
