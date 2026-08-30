@@ -1,0 +1,55 @@
+// Design tokens du Design System Figma — valeurs exactes, ne pas approximer.
+//
+// Custom properties CSS (--x), pas des $variables Sass : elles doivent
+// survivre dans le CSS compilé pour rester inspectables/modifiables au
+// runtime (devtools, futur thème). Sass n'est utilisé dans ce dossier que
+// pour organiser les fichiers (@use dans main.scss), pas pour son propre
+// système de variables.
+
+:root {
+  // Couleurs
+  --color-bg-surface: #ccbeb1;
+  --color-bg-accent: #baa897;
+  --color-bg-button-primary: #4a3d30;
+  --color-bg-button-hover: #614f3d;
+  --color-bg-button-secondary-hover: #baa897;
+  --color-text-primary: #22333b;
+  --color-text-on-button: #ffffff;
+  --color-text-accent-hover: #584c41;
+  --color-text-button-secondary: #22333b;
+  --color-border-focus-ring: #4a3d30;
+  --color-border-button-secondary: #22333b;
+  --color-state-success: #2e572e;
+  --color-state-error: #8a3228;
+
+  // Typographie — tailles (6 styles, STIX Two Math Regular sauf mention)
+  // En rem (base 16px = 1rem), pour respecter la taille de police définie
+  // par l'utilisateur dans son navigateur (accessibilité) — valeur px
+  // Figma d'origine en commentaire pour référence, proportions exactes.
+  --font-h1: 2.625rem; // 42px
+  --font-h2: 1.875rem; // 30px
+  --font-h3: 1.375rem; // 22px
+  --font-body: 1rem; // 16px
+  --font-caption: 0.875rem; // 14px
+  --font-label: 1.125rem; // 18px
+
+  // Typographie — familles. Non fournies telles quelles dans les tokens de
+  // taille ci-dessus, mais nécessaires pour appliquer réellement les
+  // polices demandées : ajoutées ici pour compléter le système.
+  // "STIX Two Math" et "Vujahday Script" confirmées disponibles sur Google
+  // Fonts (vérifié via l'API CSS2 réelle, pas supposé) — chargées dans
+  // index.html. Fallback serif propre si le chargement échoue.
+  --font-family-body: "STIX Two Math", "Times New Roman", serif;
+  --font-family-accent: "Vujahday Script", cursive; // logo "FM" uniquement
+
+  // Espacement et formes
+  --radius-pill: 30px;
+  --spacing-button-padding-x: 24px;
+  --spacing-button-padding-y: 16px;
+  --spacing-nav-gap: 32px;
+
+  // Grille desktop (référence Figma — pas encore consommée à ce stade,
+  // les pages individuelles ne sont pas concernées par cette tâche)
+  --grid-max-width: 1440px;
+  --grid-columns: 12;
+}

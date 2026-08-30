@@ -1,0 +1,12 @@
+// Point d'entrée : compilé seul en CSS (voir README pour la commande).
+// Ordre volontaire : variables (tokens) -> reset -> typographie.
+@use "variables";
+@use "reset";
+@use "typography";
+
+body {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+}
