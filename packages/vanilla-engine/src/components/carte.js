@@ -3,6 +3,7 @@ import { BrowserLink } from "../router/browser-router.js";
 
 const schema = {
   titre: { type: "string", required: true },
+  soustitre: { type: "string", required: false, default: "" },
   image: { type: "string", required: false, default: "" },
   description: { type: "string", required: false, default: "" },
   lien: { type: "string", required: true },
@@ -16,6 +17,7 @@ export default function Carte(props) {
   }
 
   const titre = finalProps.titre ?? "";
+  const soustitre = finalProps.soustitre ?? "";
   const image = finalProps.image ?? "";
   const description = finalProps.description ?? "";
   const lien = finalProps.lien ?? "";
@@ -34,6 +36,11 @@ export default function Carte(props) {
       {
         type: "h2",
         children: [titre],
+      },
+      {
+        type: "p",
+        attributes: [["class", ["soustitre"]]],
+        children: [soustitre],
       },
       {
         type: "p",

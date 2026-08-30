@@ -11,9 +11,23 @@ function getAttribute(structure, name) {
   return found ? found[1] : undefined;
 }
 
+// Carte a maintenant 2 <p> (soustitre puis description) : on les distingue par
+// la classe "soustitre" plutôt que par position, pour rester robuste si
+// l'ordre change un jour.
+function findParagraph(structure, className) {
+  return structure.children.find(
+    (child) =>
+      child.type === "p" &&
+      (className
+        ? getAttribute(child, "class")?.includes(className)
+        : !getAttribute(child, "class")),
+  );
+}
+
 test("props valides complètes -> structure div avec le bon type et les bonnes valeurs", () => {
   const structure = Carte({
     titre: "Mon projet",
+    soustitre: "Une accroche",
     image: "/img.png",
     description: "Une description",
     lien: "/projets/mon-projet",
@@ -28,7 +42,10 @@ test("props valides complètes -> structure div avec le bon type et les bonnes v
   const titre = findChild(structure, "h2");
   assert.deepEqual(titre.children, ["Mon projet"]);
 
-  const description = findChild(structure, "p");
+  const soustitre = findParagraph(structure, "soustitre");
+  assert.deepEqual(soustitre.children, ["Une accroche"]);
+
+  const description = findParagraph(structure);
   assert.deepEqual(description.children, ["Une description"]);
 
   const lien = findChild(structure, "a");
@@ -58,8 +75,26 @@ test("image/description absentes -> valeurs par défaut '' utilisées, pas de cr
   const image = findChild(structure, "img");
   assert.equal(getAttribute(image, "src"), "");
 
-  const description = findChild(structure, "p");
+  const description = findParagraph(structure);
   assert.deepEqual(description.children, [""]);
+});
+
+test("soustitre rempli -> affiché dans un <p class=\"soustitre\">", () => {
+  const structure = Carte({
+    titre: "Projet",
+    soustitre: "Automatisez vos processus !",
+    lien: "/projets/z",
+  });
+
+  const soustitre = findParagraph(structure, "soustitre");
+  assert.deepEqual(soustitre.children, ["Automatisez vos processus !"]);
+});
+
+test("soustitre absent -> valeur par défaut '' utilisée, pas de crash", () => {
+  const structure = Carte({ titre: "Sans soustitre", lien: "/projets/w" });
+
+  const soustitre = findParagraph(structure, "soustitre");
+  assert.deepEqual(soustitre.children, [""]);
 });
 
 test("le lien passé est bien utilisé dans le BrowserLink retourné (attribut href)", () => {
