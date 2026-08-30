@@ -15,6 +15,9 @@
       "type": "string",
       "required": true
     },
+    "soustitre": {
+      "type": "text"
+    },
     "description": {
       "type": "text",
       "required": false

@@ -18,8 +18,9 @@ tel quel sur un serveur de production.
 - `src/prototypes/string-interpolate.js` — `String.prototype.interpolate(data)` : remplace les `{{ placeholders }}` d'une chaîne par les valeurs de `data` (voir "Interpolation de chaînes" ci-dessous)
 - `src/state/` — gestion d'état réactive : `createStore(initialState)` → `getState()`, `setState(update)`, `subscribe(callback)` (implémenté avec `EventTarget`/`CustomEvent` natifs)
 - `src/validation/` — validation des props de composants : `validateProps(props, schema)` → `{ valid, errors, props }` (voir "Validation des props" ci-dessous)
-- `src/components/` — composants réutilisables : seul `Carte({ titre, image, description, lien })` existe pour l'instant (les 7 autres composants du backlog — header, footer, navigation, listes, pagination, éléments d'expérience, formulaire — sont reportés faute de page ou de donnée réelle les justifiant aujourd'hui)
-- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`), `string-interpolate.test.js` (`src/prototypes/`)
+- `src/components/` — composants réutilisables : seul `Carte({ titre, soustitre, image, description, lien })` existe pour l'instant (`soustitre` optionnel, `default: ""`) — les 7 autres composants du backlog (header, footer, navigation, listes, pagination, éléments d'expérience, formulaire) sont reportés faute de page ou de donnée réelle les justifiant aujourd'hui
+- `src/utils/` — utilitaires génériques partagés : `resolveImageUrl(url, origin)` (voir "Résolution d'URL de médias" ci-dessous)
+- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`), `string-interpolate.test.js` (`src/prototypes/`), `resolve-url.test.js` (`src/utils/`)
 
 ## Interpolation de chaînes
 
@@ -41,12 +42,15 @@ import "../prototypes/string-interpolate.js";
 ## Validation des props
 
 `validateProps(props, schema)` vérifie un objet `props` par rapport à un
-`schema` (`{ clé: { type, required, default } }`) et retourne
-`{ valid, errors, props }` — `props` est l'objet reçu complété avec les
-valeurs `default` du schema pour les clés absentes. Convention du framework :
-les composants reçoivent un **objet props nommé** (ex. `Carte({ titre,
-image, lien })`), pas des arguments positionnels — seul `BrowserLink` fait
-exception (2 paramètres simples, non concerné).
+`schema` (`{ clé: { type, required, default, pattern, minLength } }`) et
+retourne `{ valid, errors, props }` — `props` est l'objet reçu complété avec
+les valeurs `default` du schema pour les clés absentes. `pattern` (une
+`RegExp`) et `minLength` (un nombre) sont optionnels, en plus de
+`type`/`required`/`default` — utiles pour valider un format (email) ou une
+longueur minimale (message d'un formulaire), sans dépendance externe.
+Convention du framework : les composants reçoivent un **objet props nommé**
+(ex. `Carte({ titre, image, lien })`), pas des arguments positionnels —
+seul `BrowserLink` fait exception (2 paramètres simples, non concerné).
 
 ```js
 import validateProps from "../validation/index.js";
@@ -54,6 +58,53 @@ import validateProps from "../validation/index.js";
 const schema = { titre: { type: "string", required: true } };
 const { valid, errors, props } = validateProps({ titre: "Mon projet" }, schema);
 ```
+
+## Résolution d'URL de médias
+
+`resolveImageUrl(url, origin)` (`src/utils/resolve-url.js`) préfixe une URL
+relative avec une origine — utile parce que Strapi (et les CMS headless en
+général) renvoie des URLs **relatives** pour les médias hébergés localement
+(ex. `image.url = "/uploads/xxx.png"`), qui sinon se résolvent par rapport à
+l'origine du **site** qui les affiche au lieu du **CMS** qui les héberge
+réellement (image cassée).
+
+**Cette fonction ne connaît et ne devine aucune origine par défaut** — elle
+est volontairement pure et générique (vraie pour n'importe quelle instance
+Strapi), donc réutilisable telle quelle par `site-azer` et `site-ayjing`
+avec *leur propre* backend. L'origine précise (ex. `http://localhost:1337`)
+n'est déclarée que dans le `config.js` de chaque site, jamais dans le
+framework.
+
+```js
+import resolveImageUrl from "../utils/resolve-url.js";
+import config from "../../config.js"; // propre à chaque site
+
+resolveImageUrl("/uploads/photo.png", config.STRAPI_ORIGIN);
+// -> "http://localhost:1337/uploads/photo.png" (avec l'origine de CE site)
+
+resolveImageUrl("https://cdn.exemple.com/photo.png", config.STRAPI_ORIGIN);
+// -> inchangée (déjà absolue, ex. CDN externe prévu au Lot 3)
+```
+
+## Envoi d'email (EmailService)
+
+`sendEmail(formData, config)` (`src/email/send-email.js`) envoie un email
+via l'API REST d'EmailJS (appel `fetch` direct, aucun SDK). `config` porte
+les identifiants EmailJS (`serviceId`, `templateId`, `publicKey`), fournis
+par le site appelant.
+
+**Répartition de la validation** : `sendEmail` ne vérifie que la
+**présence** des champs requis (`nom`, `email`, `message` — schema minimal,
+sans `pattern` ni `minLength`). C'est un garde-fou de dernier recours pour
+le service partagé, pas la validation métier complète. Le détail des règles
+(format d'email valide, longueur minimale du message, etc.) reste à la
+charge du formulaire appelant (voir `sites/site-fedi/pages/contact-page.js`,
+qui applique ces règles plus fines avant même d'appeler `sendEmail`). Ça
+évite de dupliquer la même logique de validation à deux endroits.
+
+Si l'appel réseau échoue (déconnexion, DNS, timeout) ou si l'API répond une
+erreur, `sendEmail` retourne `{ success: false, errors }` — jamais
+d'exception non gérée.
 
 ## Génération PDF (PdfService)
 
