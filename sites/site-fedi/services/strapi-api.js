@@ -1,29 +1,42 @@
 import config from "../config.js";
 
+// Centralise la gestion des échecs réels (réponse HTTP en erreur, réseau
+// injoignable, JSON invalide) : retourne null dans tous ces cas, jamais une
+// exception. Le cas "pas de données" (ex: Strapi répond proprement avec
+// data: null) n'est pas concerné ici, chaque fonction le gère elle-même via
+// son propre "?? repli" juste en dessous, comme avant.
+async function fetchJson(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      return null;
+    }
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 export async function getProjets() {
-  const response = await fetch(
+  const json = await fetchJson(
     `${config.API_URL}/projets?populate=image&filters[statut][$eq]=publie`,
   );
-  const json = await response.json();
-  return json.data;
+  return json?.data ?? [];
 }
 
 export async function getProfil() {
-  const response = await fetch(`${config.API_URL}/profil?populate=photo,cv`);
-  const json = await response.json();
-  return json.data;
+  const json = await fetchJson(`${config.API_URL}/profil?populate=photo,cv`);
+  return json?.data ?? null;
 }
 
 export async function getCompetences() {
-  const response = await fetch(`${config.API_URL}/competences`);
-  const json = await response.json();
-  return json.data;
+  const json = await fetchJson(`${config.API_URL}/competences`);
+  return json?.data ?? [];
 }
 
 export async function getProjetBySlug(slug) {
-  const response = await fetch(
+  const json = await fetchJson(
     `${config.API_URL}/projets?filters[slug][$eq]=${encodeURIComponent(slug)}&filters[statut][$eq]=publie&populate=image`,
   );
-  const json = await response.json();
-  return json.data[0] ?? null;
+  return json?.data?.[0] ?? null;
 }
