@@ -1,0 +1,16 @@
+# Configuration provisoire pour la toute première demande Let's Encrypt.
+# Copier ce fichier vers apis.conf avant de démarrer Nginx sans certificat.
+server {
+    listen 80;
+    server_name api-portfolio-aijing.aijing.li
+                api-portfolio-fedi.aijing.li
+                api-portfolio-azer.aijing.li;
+
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 404;
+    }
+}
