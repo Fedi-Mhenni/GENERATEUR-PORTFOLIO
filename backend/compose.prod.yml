@@ -1,0 +1,106 @@
+name: makemyportfolio-prod
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    env_file:
+      - ./production/env/postgres.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./production/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    mem_limit: 2g
+    networks:
+      - strapi_a_network
+      - strapi_b_network
+      - strapi_c_network
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: portfolio_nginx
+    restart: unless-stopped
+    depends_on:
+      - strapi_a
+      - strapi_b
+      - strapi_c
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./production/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./production/certbot/www:/var/www/certbot:ro
+      - ./production/certbot/conf:/etc/letsencrypt:ro
+    networks:
+      - edge_network
+      - strapi_a_network
+      - strapi_b_network
+      - strapi_c_network
+
+  strapi_a:
+    image: ${STRAPI_IMAGE:-portfolio-strapi:local}
+    restart: unless-stopped
+    env_file:
+      - ./production/env/strapi-a.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - uploads_a:/app/public/uploads
+    expose:
+      - "1337"
+    mem_limit: 2g
+    networks:
+      - strapi_a_network
+
+  strapi_b:
+    image: ${STRAPI_IMAGE:-portfolio-strapi:local}
+    restart: unless-stopped
+    env_file:
+      - ./production/env/strapi-b.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - uploads_b:/app/public/uploads
+    expose:
+      - "1337"
+    mem_limit: 2g
+    networks:
+      - strapi_b_network
+
+  strapi_c:
+    image: ${STRAPI_IMAGE:-portfolio-strapi:local}
+    restart: unless-stopped
+    env_file:
+      - ./production/env/strapi-c.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - uploads_c:/app/public/uploads
+    expose:
+      - "1337"
+    mem_limit: 2g
+    networks:
+      - strapi_c_network
+
+volumes:
+  postgres_data:
+  uploads_a:
+  uploads_b:
+  uploads_c:
+
+networks:
+  strapi_a_network:
+    internal: true
+  strapi_b_network:
+    internal: true
+  strapi_c_network:
+    internal: true
+  edge_network:
+    driver: bridge

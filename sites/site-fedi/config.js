@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:1337/api";
+const API_URL = "https://api-portfolio-fedi.aijing.li/api";
 
 const config = {
   API_URL,
