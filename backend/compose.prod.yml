@@ -19,7 +19,7 @@ services:
       - strapi_a_network
       - strapi_b_network
       - strapi_c_network
-      -
+
   nginx:
     image: nginx:1.27-alpine
     container_name: portfolio_nginx
