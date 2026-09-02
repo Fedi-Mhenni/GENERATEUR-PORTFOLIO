@@ -10,33 +10,12 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./production/postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d postgres"]
       interval: 5s
       timeout: 5s
       retries: 10
     mem_limit: 2g
     networks:
-      - strapi_a_network
-      - strapi_b_network
-      - strapi_c_network
-      -
-  nginx:
-    image: nginx:1.27-alpine
-    container_name: portfolio_nginx
-    restart: unless-stopped
-    depends_on:
-      - strapi_a
-      - strapi_b
-      - strapi_c
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./production/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./production/certbot/www:/var/www/certbot:ro
-      - ./production/certbot/conf:/etc/letsencrypt:ro
-    networks:
-      - edge_network
       - strapi_a_network
       - strapi_b_network
       - strapi_c_network
@@ -102,5 +81,3 @@ networks:
     internal: true
   strapi_c_network:
     internal: true
-  edge_network:
-    driver: bridge
