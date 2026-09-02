@@ -1,6 +1,5 @@
 env/*.env
 !env/*.env.example
 
-# Données runtime TLS créées seulement sur le VPS
-certbot/conf/
-certbot/www/
+# Données runtime TLS créées seulement sur le VPS (certificats et challenges)
+certbot/
