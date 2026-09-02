@@ -1,5 +1,7 @@
 import type { Core } from '@strapi/strapi';
 
+const corsOrigin = process.env.CORS_ORIGIN;
+
 const config: Core.Config.Middlewares = [
   'strapi::logger',
   'strapi::errors',
@@ -7,11 +9,7 @@ const config: Core.Config.Middlewares = [
   {
     name: 'strapi::cors',
     config: {
-      origin: [
-        'https://portfolio-aijing.vercel.app',
-        'https://portfolio-fedi-two.vercel.app',
-        'https://portfolio-azer.vercel.app',
-      ],
+      origin: corsOrigin ? [corsOrigin] : [],
       methods: ['GET', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
       credentials: false,
