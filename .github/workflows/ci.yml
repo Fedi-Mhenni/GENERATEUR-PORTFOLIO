@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "packages/**"
+      - "sites/**"
+      - ".github/workflows/ci.yml"
+      - "eslint.config.mjs"
+      - "package.json"
+      - "package-lock.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint all source code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install lint dependencies
+        run: npm ci
+
+      - name: Lint backend, shared package, and sites
+        run: npm run lint
+
+  vanilla-engine-tests:
+    name: Test shared vanilla engine
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run unit tests
+        run: node --test
+        working-directory: packages/vanilla-engine
+
+  backend:
+    name: Test and build Strapi backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: backend/app
+
+      - name: Run backend tests
+        run: npm test
+        working-directory: backend/app
+
+      - name: Build Strapi admin
+        run: npm run build
+        working-directory: backend/app
