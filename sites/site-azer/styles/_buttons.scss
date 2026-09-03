@@ -1,7 +1,7 @@
 @use "variables" as *;
 
 $color-primary-hover: #0559d7;
-$color-accent-hover: #3a54e4;
+$color-text-hover: #2b2b2b;
 
 %btn-base {
   display: inline-flex;
@@ -36,11 +36,11 @@ $color-accent-hover: #3a54e4;
 
 .btn-secondary {
   @extend %btn-base;
-  background-color: $color-accent;
+  background-color: $color-text;
   color: $color-white;
 
   &:hover {
-    background-color: $color-accent-hover;
+    background-color: $color-text-hover;
   }
 }
 
