@@ -1,5 +1,5 @@
 const config = {
-  API_URL: "http://localhost:1337/api",
+  API_URL: "https://api-portfolio-azer.aijing.li/api",
 };
 
 export default config;

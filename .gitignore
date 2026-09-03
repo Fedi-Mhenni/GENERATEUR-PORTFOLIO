@@ -1,0 +1,4 @@
+/.idea
+
+# Artefacts statiques créés pour les déploiements Vercel
+dist/

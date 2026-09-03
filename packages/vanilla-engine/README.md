@@ -86,6 +86,59 @@ resolveImageUrl("https://cdn.exemple.com/photo.png", config.STRAPI_ORIGIN);
 // -> inchangée (déjà absolue, ex. CDN externe prévu au Lot 3)
 ```
 
+## Envoi d'email (EmailService)
+
+`sendEmail(formData, config)` (`src/email/send-email.js`) envoie un email
+via l'API REST d'EmailJS (appel `fetch` direct, aucun SDK). `config` porte
+les identifiants EmailJS (`serviceId`, `templateId`, `publicKey`), fournis
+par le site appelant.
+
+**Répartition de la validation** : `sendEmail` ne vérifie que la
+**présence** des champs requis (`nom`, `email`, `message` — schema minimal,
+sans `pattern` ni `minLength`). C'est un garde-fou de dernier recours pour
+le service partagé, pas la validation métier complète. Le détail des règles
+(format d'email valide, longueur minimale du message, etc.) reste à la
+charge du formulaire appelant (voir `sites/site-fedi/pages/contact-page.js`,
+qui applique ces règles plus fines avant même d'appeler `sendEmail`). Ça
+évite de dupliquer la même logique de validation à deux endroits.
+
+Si l'appel réseau échoue (déconnexion, DNS, timeout) ou si l'API répond une
+erreur, `sendEmail` retourne `{ success: false, errors }` — jamais
+d'exception non gérée.
+
+## Génération PDF (PdfService)
+
+`generatePdf(element, options)` (`src/pdf/generate-pdf.js`) génère un PDF à
+partir d'un élément DOM via `html2pdf.js`. Le module ne l'importe jamais
+directement (imports réseau `https://` non supportés par le loader ESM de
+Node, utilisé par les tests) : il lit `globalThis.html2pdf` au moment de
+l'appel, exactement comme `sendEmail` lit `globalThis.fetch`.
+
+Le site consommateur est donc responsable de charger `html2pdf.js` et de
+l'exposer sur `window` **une seule fois**, au démarrage (ex. dans son
+`index.js`) :
+
+```js
+import html2pdf from "https://esm.run/html2pdf.js@0.14.0";
+window.html2pdf = html2pdf;
+```
+
+La version est volontairement figée (`@0.14.0`) pour éviter qu'une mise à
+jour silencieuse du CDN ne change de comportement sans qu'on s'en rende
+compte.
+
+```js
+import generatePdf from "./pdf/index.js";
+
+const { success, errors } = await generatePdf(document.querySelector("#cv"), {
+  filename: "cv.pdf",
+});
+```
+
+Si `globalThis.html2pdf` est absent (script non chargé) ou si la génération
+échoue, `generatePdf` retourne `{ success: false, errors }` — jamais
+d'exception non gérée.
+
 ## Utilisation en développement
 
 Ce package n'est pas consommé directement à sa racine — chaque site (dans

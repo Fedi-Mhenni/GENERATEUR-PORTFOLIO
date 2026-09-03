@@ -43,3 +43,27 @@ GENERATEUR-PORTFOLIO/
 ├── package.json                      # npm workspaces (racine)
 └── README.md
 ```
+
+## Infrastructure de production (`infra/hosting-cicd-cdn`)
+
+Cette branche prépare l'hébergement de production des trois portfolios. Les
+frontends sont déployés par Vercel ; les trois APIs Strapi sont hébergées sur
+un VPS OVHcloud, derrière Nginx et HTTPS.
+
+| Portfolio | Frontend public | API Strapi associée |
+| --- | --- | --- |
+| Aijing | `https://portfolio-aijing.vercel.app` | `https://api-portfolio-aijing.aijing.li/api` |
+| Fedi | `https://portfolio-fedi-two.vercel.app` | `https://api-portfolio-fedi.aijing.li/api` |
+| Azer | `https://portfolio-azer.vercel.app` | `https://api-portfolio-azer.aijing.li/api` |
+
+Nginx est le seul service qui expose les ports publics `80` et `443`. Les
+ports PostgreSQL (`5432`) et Strapi (`1337`) restent accessibles uniquement
+sur les réseaux Docker internes. Chaque instance Strapi possède sa propre
+base, son propre volume de médias et autorise uniquement son frontend Vercel
+via CORS.
+
+Les instructions de configuration du VPS, de Certbot, de Nginx, des variables
+d'environnement et du redéploiement sont dans
+[backend/production/README.md](backend/production/README.md). Les vrais
+fichiers `production/env/*.env` et les certificats Let's Encrypt ne sont jamais
+commités.
