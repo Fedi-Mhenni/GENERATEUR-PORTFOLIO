@@ -2,6 +2,7 @@
 
 $color-primary-hover: #0559d7;
 $color-text-hover: #2b2b2b;
+$color-danger-hover: #c40000;
 
 %btn-base {
   display: inline-flex;
@@ -41,6 +42,16 @@ $color-text-hover: #2b2b2b;
 
   &:hover {
     background-color: $color-text-hover;
+  }
+}
+
+.btn-danger {
+  @extend %btn-base;
+  background-color: $color-danger;
+  color: $color-white;
+
+  &:hover {
+    background-color: $color-danger-hover;
   }
 }
 

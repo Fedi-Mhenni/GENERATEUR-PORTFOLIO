@@ -70,7 +70,7 @@ export default function Sidebar(profil, currentPath) {
       },
       {
         type: "a",
-        attributes: [["href", "#"], ["class", ["btn-primary", "sidebar-cv"]]],
+        attributes: [["href", "#"], ["class", ["btn-danger", "sidebar-cv"]]],
         events: [["click", handleDownloadCv]],
         children: [
           { type: "span", attributes: [["class", ["icon", "icon-download"]]] },
