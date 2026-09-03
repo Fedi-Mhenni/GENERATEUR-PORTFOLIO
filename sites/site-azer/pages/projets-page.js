@@ -1,5 +1,7 @@
 import Sidebar from "../components/sidebar.js";
 import BrowserLink from "../vanilla-engine/src/router/link.js";
+import ProjectBadge from "../components/project-badge.js";
+import getTechIconClasses from "../lib/tech-icons.js";
 import { getProfil, getProjets } from "../services/strapi-api.js";
 
 const FIGMA_PROJECTS = [
@@ -48,22 +50,14 @@ function mergeWithStrapi(figmaProject, strapiProjects) {
   };
 }
 
-function projectBadge(project) {
-  if (project.badge.type === "image") {
-    return {
-      type: "img",
-      attributes: [["src", project.badge.src], ["alt", ""], ["class", ["project-badge-image"]]],
-    };
-  }
-
-  return { type: "span", attributes: [["class", ["icon", project.badge.icon]]] };
-}
-
 function projectTag(name, index) {
   return {
     type: "span",
     attributes: [["class", ["project-tag", `project-tag-${index + 1}`]]],
-    children: [name],
+    children: [
+      { type: "span", attributes: [["class", getTechIconClasses(name)]] },
+      { type: "span", children: [name] },
+    ],
   };
 }
 
@@ -98,7 +92,7 @@ function projectCard(project) {
             type: "div",
             attributes: [["class", ["project-card-heading"]]],
             children: [
-              { type: "span", attributes: [["class", ["project-badge"]]], children: [projectBadge(project)] },
+              { type: "span", attributes: [["class", ["project-badge"]]], children: [ProjectBadge(project.badge)] },
               { type: "h2", children: [project.title] },
             ],
           },

@@ -52,7 +52,6 @@ function heroContent(profil) {
           : []),
         {
           type: "div",
-          attributes: [["id", "cv-content"]],
           children: [
             { type: "h1", children: [`${profil.prenom} ${profil.nom}`] },
             ...(profil.poste

@@ -1,0 +1,397 @@
+@use "sass:list";
+@use "variables" as *;
+
+$color-tag-pill-bg: rgba(217, 217, 217, 0.42);
+$color-results-bg: rgba(7, 0, 0, 0.02);
+$color-architecture-bg: rgba(255, 255, 255, 0.14);
+$color-architecture-box-bg: rgba(174, 168, 167, 0.24);
+$color-source-bg: rgba(194, 192, 192, 0.32);
+$color-source-border: #189bf9;
+$color-check-green: #15803d;
+
+// Une couleur par position (1 à 6), tokens du design system uniquement,
+// partagée par les badges d'icône Key Features (1-5) et Architecture
+// (1-6) pour que "même position = même couleur" reste une seule source
+// de vérité. Icône blanche par défaut, sauf sur success/warning : trop
+// clairs pour du blanc (2.28:1 / 2.15:1, sous le seuil AA 3:1 pour un
+// composant graphique) -> $color-text à la place (8.29:1 / 8.79:1).
+$icon-badge-colors: (
+  1: ($color-primary, $color-white),
+  2: ($color-accent, $color-white),
+  3: ($color-success, $color-text),
+  4: ($color-warning, $color-text),
+  5: ($color-danger, $color-white),
+  6: ($color-text, $color-white),
+);
+
+.project-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  padding: $space-5 $space-7 $space-7;
+}
+
+.project-detail-back {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  border-radius: $radius-lg;
+  background-color: $color-primary;
+  color: $color-white;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  font-weight: $font-weight-small;
+  text-decoration: none;
+
+  .icon {
+    color: $color-white;
+  }
+}
+
+.project-detail-hero {
+  display: flex;
+  align-items: center;
+  gap: $space-6;
+}
+
+.project-detail-intro {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.project-detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.project-detail-intro h1 {
+  margin: 0;
+  font-family: $font-family;
+  font-size: 40px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.project-detail-description {
+  margin: 0;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  font-weight: $font-weight-body;
+  color: $color-text-secondary;
+}
+
+.project-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.project-detail-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  padding: $space-1 $space-3;
+  border-radius: 18px;
+  background-color: $color-tag-pill-bg;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25);
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+
+  .icon {
+    width: 16px;
+    height: 16px;
+    color: $color-text;
+  }
+
+  .icon-brand {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.project-detail-screenshot {
+  flex-shrink: 0;
+  width: 380px;
+  max-width: 45%;
+  border-radius: 27px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  object-fit: cover;
+}
+
+.project-detail-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: $space-4;
+  align-items: start;
+}
+
+.project-detail-features {
+  background-color: $color-white;
+  border-radius: 11px;
+  box-shadow: 0 4px 8.5px rgba(0, 0, 0, 0.25);
+  padding: $space-5;
+}
+
+.project-detail-features h2 {
+  margin: 0 0 $space-4;
+  font-family: $font-family;
+  font-size: 24px;
+  font-weight: 800;
+  color: $color-text;
+}
+
+.project-detail-features-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-4;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-detail-feature {
+  display: flex;
+  gap: $space-3;
+}
+
+.feature-icon-badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-md;
+}
+
+// Couleurs par position générées depuis $icon-badge-colors (une seule
+// source de vérité, partagée avec .architecture-icon-badge plus bas).
+// Key Features n'utilise que les positions 1 à 5.
+@each $position, $pair in $icon-badge-colors {
+  @if $position < 6 {
+    .feature-icon-badge-#{$position} {
+      background-color: list.nth($pair, 1);
+
+      .icon {
+        color: list.nth($pair, 2);
+      }
+    }
+  }
+}
+
+.project-detail-feature h3 {
+  margin: 0 0 $space-1;
+  font-family: $font-family;
+  font-size: 20px;
+  font-weight: 500;
+  color: $color-text;
+}
+
+.project-detail-feature p {
+  margin: 0;
+  font-family: $font-family;
+  font-size: 15px;
+  font-weight: 300;
+  color: $color-text-secondary;
+}
+
+.project-detail-results {
+  background-color: $color-results-bg;
+  border-radius: $radius-lg;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  padding: $space-5;
+}
+
+.project-detail-results h2 {
+  margin: 0 0 $space-4;
+  font-family: $font-family;
+  font-size: 15px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.project-detail-results ul {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-detail-results li {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  font-family: $font-family;
+  font-size: $font-size-small;
+  font-weight: $font-weight-body;
+  color: $color-text;
+}
+
+.project-detail-check {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: $color-check-green;
+}
+
+.project-detail-architecture {
+  background-color: $color-architecture-bg;
+  border-radius: 19px;
+  box-shadow: 0 4px 36px rgba(0, 0, 0, 0.25);
+  padding: $space-5;
+}
+
+.project-detail-architecture h2 {
+  margin: 0 0 $space-4;
+  font-family: $font-family;
+  font-size: 24px;
+  font-weight: 800;
+  color: $color-text;
+}
+
+.architecture-diagram {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+}
+
+.architecture-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+  min-width: 100px;
+  padding: $space-3;
+  border-radius: 7px;
+  background-color: $color-architecture-box-bg;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 800;
+  color: $color-text;
+  text-align: center;
+}
+
+.architecture-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-sm;
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Même position = même couleur que Key Features (voir $icon-badge-colors),
+// étendu à la 6e boîte (Database).
+@each $position, $pair in $icon-badge-colors {
+  .architecture-icon-badge-#{$position} {
+    background-color: list.nth($pair, 1);
+
+    .icon {
+      color: list.nth($pair, 2);
+    }
+  }
+}
+
+.architecture-arrow {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: $color-text-secondary;
+}
+
+.project-detail-source {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  padding: $space-4 $space-5;
+  border: 1px solid $color-source-border;
+  border-radius: 16px;
+  background-color: $color-source-bg;
+}
+
+.project-detail-source .icon-github {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  color: $color-text;
+}
+
+.project-detail-source-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-detail-source-text h2 {
+  margin: 0 0 $space-1;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 800;
+  color: $color-text;
+}
+
+.project-detail-source-text p {
+  margin: 0;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: $font-weight-body;
+  color: $color-text-secondary;
+}
+
+.project-detail-repo-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  border-radius: 7px;
+  background-color: $color-accent;
+  color: $color-white;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  font-weight: $font-weight-small;
+  text-decoration: none;
+
+  .icon {
+    color: $color-white;
+  }
+}
+
+@media (max-width: 900px) {
+  .project-detail-hero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .project-detail-screenshot {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .project-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-detail-features-list {
+    grid-template-columns: 1fr;
+  }
+
+  .project-detail-source {
+    flex-wrap: wrap;
+  }
+}

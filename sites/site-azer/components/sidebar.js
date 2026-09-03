@@ -1,5 +1,5 @@
 import BrowserLink from "../vanilla-engine/src/router/link.js";
-import generatePdf from "../vanilla-engine/src/pdf/index.js";
+import CvLink from "./cv-link.js";
 
 function withIcon(link, iconClass, label) {
   link.children = [
@@ -29,20 +29,6 @@ function externalLink(url, label, iconClass) {
   );
 }
 
-async function handleDownloadCv(event) {
-  event.preventDefault();
-
-  const element = document.getElementById("cv-content");
-  if (!element) {
-    return;
-  }
-
-  const result = await generatePdf(element, { filename: "cv-azer-jouini.pdf" });
-  if (!result.success) {
-    console.error("Download CV a échoué :", result.errors);
-  }
-}
-
 export default function Sidebar(profil, currentPath) {
   const socialLinks = [
     profil?.github ? externalLink(profil.github, "GitHub", "icon-github") : null,
@@ -68,15 +54,7 @@ export default function Sidebar(profil, currentPath) {
         attributes: [["class", ["sidebar-social"]]],
         children: socialLinks,
       },
-      {
-        type: "a",
-        attributes: [["href", "#"], ["class", ["btn-danger", "sidebar-cv"]]],
-        events: [["click", handleDownloadCv]],
-        children: [
-          { type: "span", attributes: [["class", ["icon", "icon-download"]]] },
-          { type: "span", children: ["Download CV"] },
-        ],
-      },
-    ],
+      CvLink(profil, ["btn-danger", "sidebar-cv"]),
+    ].filter(Boolean),
   };
 }

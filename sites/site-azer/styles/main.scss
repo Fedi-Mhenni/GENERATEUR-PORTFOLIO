@@ -8,6 +8,8 @@
 @use "layout";
 @use "skills";
 @use "projects";
+@use "project-detail";
+@use "contact";
 
 a:focus-visible {
   outline: $focus-outline-width solid $focus-outline-color;

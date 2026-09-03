@@ -7,8 +7,6 @@ $color-tag-red: #ff0004;
 $color-tag-navy: #0f0f2c;
 $color-tag-orange: #ff8800;
 $color-tag-terracotta: #cc6d6d;
-$color-badge-robot: $color-primary;
-$color-badge-document: $color-accent;
 $color-cta-hover-bg: #e9f972;
 
 .projects-page {
@@ -134,16 +132,8 @@ $color-cta-hover-bg: #e9f972;
   height: 48px;
   border-radius: $radius-full;
   background-color: $color-surface;
-  color: $color-white;
+  color: $color-text;
   overflow: hidden;
-}
-
-.project-badge:has(.icon-robot) {
-  background-color: $color-badge-robot;
-}
-
-.project-badge:has(.icon-document) {
-  background-color: $color-badge-document;
 }
 
 .project-badge-image {
@@ -176,11 +166,25 @@ $color-cta-hover-bg: #e9f972;
 }
 
 .project-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
   border-radius: 13px;
   padding: $space-1 $space-3;
   font-family: $font-family;
   font-size: 14px;
   font-weight: 600;
+
+  .icon {
+    width: 14px;
+    height: 14px;
+    color: currentColor;
+  }
+
+  .icon-brand {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 .project-tag-1 {
