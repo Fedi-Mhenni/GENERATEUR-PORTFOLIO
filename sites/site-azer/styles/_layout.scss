@@ -1,18 +1,45 @@
 @use "variables" as *;
 
+$sidebar-collapsed-width: 72px;
+$sidebar-expanded-width: 240px;
+
 .page-layout {
-  display: flex;
   min-height: 100vh;
 }
 
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  width: 240px;
-  flex-shrink: 0;
+  width: $sidebar-collapsed-width;
+  overflow: hidden;
   gap: $space-6;
   padding: $space-5 $space-4;
   background-color: $color-surface;
+  transition: width 0.2s ease;
+
+  &:hover,
+  &:focus-within {
+    width: $sidebar-expanded-width;
+  }
+}
+
+.sidebar a span:not(.icon) {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar:hover a span:not(.icon),
+.sidebar:focus-within a span:not(.icon) {
+  opacity: 1;
+  width: auto;
 }
 
 .sidebar-nav,
@@ -68,6 +95,7 @@
   flex-direction: column;
   justify-content: center;
   gap: $space-5;
+  margin-left: $sidebar-collapsed-width;
   padding: $space-7;
   background-image: radial-gradient(circle at top right, rgba($color-primary, 0.06), transparent 60%);
 }

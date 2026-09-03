@@ -1,25 +1,29 @@
-import { getProjets } from "../services/strapi-api.js";
-import BrowserLink from "../vanilla-engine/src/router/link.js";
+import Sidebar from "../components/sidebar.js";
+import { getProfil, getProjets } from "../services/strapi-api.js";
 
 export default async function ProjetsPage() {
-  const projets = await getProjets();
+  const [profil, projets] = await Promise.all([getProfil(), getProjets()]);
 
   return {
     type: "div",
+    attributes: [["class", ["page-layout"]]],
     children: [
-      BrowserLink("/", "← Retour à l'accueil"),
+      Sidebar(profil, "/projects"),
       {
-        type: "h1",
-        children: ["Mes projets"],
-      },
-      {
-        type: "ul",
-        children: projets.length > 0
-          ? projets.map((projet) => ({
-              type: "li",
-              children: [projet.attributes?.titre ?? projet.titre],
-            }))
-          : [{ type: "li", children: ["Aucun projet trouvé"] }],
+        type: "main",
+        attributes: [["class", ["hero"]]],
+        children: [
+          { type: "h1", children: ["Mes projets"] },
+          {
+            type: "ul",
+            children: projets.length > 0
+              ? projets.map((projet) => ({
+                  type: "li",
+                  children: [projet.attributes?.titre ?? projet.titre],
+                }))
+              : [{ type: "li", children: ["Aucun projet trouvé"] }],
+          },
+        ],
       },
     ],
   };
