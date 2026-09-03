@@ -1,10 +1,5 @@
 import config from "../config.js";
 
-// Centralise la gestion des échecs réels (réponse HTTP en erreur, réseau
-// injoignable, JSON invalide) : retourne null dans tous ces cas, jamais une
-// exception. Le cas "pas de données" (ex: Strapi répond proprement avec
-// data: null) n'est pas concerné ici, chaque fonction le gère elle-même via
-// son propre "?? repli" juste en dessous.
 async function fetchJson(url) {
   try {
     const response = await fetch(url);

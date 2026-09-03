@@ -1,0 +1,51 @@
+$color-primary: #0663ef;
+$color-accent: #405dfd;
+$color-danger: #e60000;
+$color-success: #22c55e;
+$color-warning: #f59e0b;
+$color-error: #ef4444;
+$color-text: #111111;
+$color-text-secondary: #666666;
+$color-surface: #eaeaea;
+$color-white: #ffffff;
+
+$font-family: "Inter", sans-serif;
+
+$font-size-h1: 40px;
+$font-weight-h1: 700;
+
+$font-size-h2: 32px;
+$font-weight-h2: 800;
+
+$font-size-h3: 24px;
+$font-weight-h3: 600;
+
+$font-size-body: 16px;
+$font-weight-body: 400;
+
+$font-size-small: 14px;
+$font-weight-small: 500;
+
+$font-size-caption: 12px;
+$font-weight-caption: 300;
+
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 16px;
+$space-4: 24px;
+$space-5: 32px;
+$space-6: 48px;
+$space-7: 64px;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 20px;
+$radius-full: 9999px;
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+$shadow-md: 0 4px 20px rgba(0, 0, 0, 0.25);
+$shadow-lg: 0 4px 36px rgba(0, 0, 0, 0.25);
+
+$focus-outline-color: $color-accent;
+$focus-outline-width: 2px;
+$focus-outline-offset: 2px;

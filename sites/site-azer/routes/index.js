@@ -4,6 +4,6 @@ import Page404 from "../pages/not-found-page.js";
 
 export default {
   "/": HomePage,
-  "/projets": ProjetsPage,
+  "/projects": ProjetsPage,
   "*": Page404,
 };

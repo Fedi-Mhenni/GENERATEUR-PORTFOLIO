@@ -1,0 +1,19 @@
+@use "variables" as *;
+@use "icons";
+@use "buttons";
+@use "badges";
+@use "inputs";
+@use "alerts";
+@use "avatars";
+@use "layout";
+
+a:focus-visible {
+  outline: $focus-outline-width solid $focus-outline-color;
+  outline-offset: $focus-outline-offset;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

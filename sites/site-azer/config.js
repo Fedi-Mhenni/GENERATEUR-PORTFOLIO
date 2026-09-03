@@ -1,5 +1,8 @@
+const API_URL = "http://localhost:1337/api";
+
 const config = {
-  API_URL: "https://api-portfolio-azer.aijing.li/api",
+  API_URL,
+  STRAPI_ORIGIN: API_URL.replace(/\/api\/?$/, ""),
 };
 
 export default config;
