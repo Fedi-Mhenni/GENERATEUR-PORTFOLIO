@@ -106,6 +106,39 @@ Si l'appel réseau échoue (déconnexion, DNS, timeout) ou si l'API répond une
 erreur, `sendEmail` retourne `{ success: false, errors }` — jamais
 d'exception non gérée.
 
+## Génération PDF (PdfService)
+
+`generatePdf(element, options)` (`src/pdf/generate-pdf.js`) génère un PDF à
+partir d'un élément DOM via `html2pdf.js`. Le module ne l'importe jamais
+directement (imports réseau `https://` non supportés par le loader ESM de
+Node, utilisé par les tests) : il lit `globalThis.html2pdf` au moment de
+l'appel, exactement comme `sendEmail` lit `globalThis.fetch`.
+
+Le site consommateur est donc responsable de charger `html2pdf.js` et de
+l'exposer sur `window` **une seule fois**, au démarrage (ex. dans son
+`index.js`) :
+
+```js
+import html2pdf from "https://esm.run/html2pdf.js@0.14.0";
+window.html2pdf = html2pdf;
+```
+
+La version est volontairement figée (`@0.14.0`) pour éviter qu'une mise à
+jour silencieuse du CDN ne change de comportement sans qu'on s'en rende
+compte.
+
+```js
+import generatePdf from "./pdf/index.js";
+
+const { success, errors } = await generatePdf(document.querySelector("#cv"), {
+  filename: "cv.pdf",
+});
+```
+
+Si `globalThis.html2pdf` est absent (script non chargé) ou si la génération
+échoue, `generatePdf` retourne `{ success: false, errors }` — jamais
+d'exception non gérée.
+
 ## Utilisation en développement
 
 Ce package n'est pas consommé directement à sa racine — chaque site (dans
