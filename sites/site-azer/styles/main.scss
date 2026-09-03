@@ -7,6 +7,7 @@
 @use "avatars";
 @use "layout";
 @use "skills";
+@use "projects";
 
 a:focus-visible {
   outline: $focus-outline-width solid $focus-outline-color;
