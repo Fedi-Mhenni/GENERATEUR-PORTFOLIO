@@ -1,0 +1,214 @@
+@use "variables" as *;
+
+.home-page {
+  margin-left: $sidebar-collapsed-width;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-7;
+  padding: $space-7 $space-7 $space-6;
+  background-image: radial-gradient(circle at top right, rgba($color-primary, 0.06), transparent 60%);
+}
+
+.hero-intro {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-width: 560px;
+}
+
+.hero-intro h1 {
+  margin: 0;
+  font-family: $font-family;
+  font-size: $font-size-h1;
+  font-weight: $font-weight-h1;
+  color: $color-text;
+}
+
+.hero-role {
+  margin: 0;
+  font-family: $font-family;
+  font-size: $font-size-h3;
+  font-weight: $font-weight-h3;
+  color: $color-primary;
+}
+
+.hero-description {
+  margin: 0;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  font-weight: $font-weight-body;
+  color: $color-text-secondary;
+}
+
+.hero-actions {
+  display: flex;
+  gap: $space-3;
+  margin-top: $space-2;
+}
+
+// Élément visuel à droite du hero : formes géométriques décoratives
+// (tokens du design system, faible opacité, même langage que les
+// stripes/shapes déjà utilisées sur Projects/Contact) derrière la
+// photo de profil, ou seules si le profil n'a pas encore de photo.
+.hero-visual {
+  position: relative;
+  flex-shrink: 0;
+  width: 280px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-visual-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-visual-shape-1,
+.hero-visual-shape-2,
+.hero-visual-shape-3 {
+  position: absolute;
+  border-radius: $radius-full;
+}
+
+.hero-visual-shape-1 {
+  top: 0;
+  left: 10%;
+  width: 220px;
+  height: 220px;
+  background-color: $color-primary;
+  opacity: 0.12;
+}
+
+.hero-visual-shape-2 {
+  bottom: 10px;
+  right: 0;
+  width: 130px;
+  height: 130px;
+  background-color: $color-accent;
+  opacity: 0.15;
+}
+
+.hero-visual-shape-3 {
+  top: 15%;
+  right: 5%;
+  width: 46px;
+  height: 46px;
+  background-color: $color-warning;
+  opacity: 0.2;
+}
+
+.hero-photo {
+  position: relative;
+  z-index: 1;
+  width: 220px;
+  height: 220px;
+  border-radius: $radius-full;
+  object-fit: cover;
+  box-shadow: $shadow-lg;
+}
+
+.home-projects {
+  padding: 0 $space-7 $space-7;
+}
+
+.home-projects h2 {
+  margin: 0 0 $space-4;
+  font-family: $font-family;
+  font-size: $font-size-h2;
+  font-weight: $font-weight-h2;
+  color: $color-text;
+}
+
+.home-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-4;
+}
+
+.home-project-card {
+  display: flex;
+  flex-direction: column;
+  background-color: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  text-decoration: none;
+  color: $color-text;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-2px);
+  }
+}
+
+.home-project-card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.home-project-card-body {
+  padding: $space-3 $space-4 $space-4;
+}
+
+.home-project-card-body h3 {
+  margin: 0 0 $space-2;
+  font-family: $font-family;
+  font-size: 18px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.home-project-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+}
+
+.home-project-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: $radius-full;
+  background-color: $color-surface;
+  color: $color-text-secondary;
+  font-family: $font-family;
+  font-size: 12px;
+  font-weight: 500;
+
+  .icon,
+  .icon-brand {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-intro {
+    align-items: center;
+    max-width: 100%;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .home-projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
