@@ -20,8 +20,41 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      vanilla_engine: ${{ steps.filter.outputs.vanilla_engine }}
+      sites: ${{ steps.filter.outputs.sites }}
+      ci: ${{ steps.filter.outputs.ci }}
+
+    steps:
+      - name: Detect changed files
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - "backend/**"
+            vanilla_engine:
+              - "packages/vanilla-engine/**"
+              - "package.json"
+            sites:
+              - "sites/**"
+            ci:
+              - ".github/workflows/ci.yml"
+              - "eslint.config.mjs"
+              - "package-lock.json"
+
   lint:
     name: Lint all source code
+    needs: changes
+    if: >-
+      needs.changes.outputs.backend == 'true' ||
+      needs.changes.outputs.vanilla_engine == 'true' ||
+      needs.changes.outputs.sites == 'true' ||
+      needs.changes.outputs.ci == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -43,6 +76,10 @@ jobs:
 
   vanilla-engine-tests:
     name: Test shared vanilla engine
+    needs: changes
+    if: >-
+      needs.changes.outputs.vanilla_engine == 'true' ||
+      needs.changes.outputs.ci == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -60,6 +97,10 @@ jobs:
 
   backend:
     name: Test and build Strapi backend
+    needs: changes
+    if: >-
+      needs.changes.outputs.backend == 'true' ||
+      needs.changes.outputs.ci == 'true'
     runs-on: ubuntu-latest
 
     steps:
