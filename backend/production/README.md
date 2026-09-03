@@ -13,6 +13,8 @@ développement local reste séparée.
 | `strapi_b` | `portfolio_b`, `uploads_b` | `api-portfolio-fedi.aijing.li` | `https://portfolio-fedi-two.vercel.app` |
 | `strapi_c` | `portfolio_c`, `uploads_c` | `api-portfolio-azer.aijing.li` | `https://portfolio-azer.vercel.app` |
 
+Le back office de chaque instance est à `api-portfolio-nom.aijing.li/admin`.
+
 Les trois enregistrements DNS de type `A` doivent pointer vers l'adresse IPv4
 publique du VPS. Nginx reçoit la requête sur `80` ou `443`, puis l'envoie au
 bon conteneur Strapi selon le nom de domaine. Les ports `1337` et `5432` ne
@@ -165,6 +167,26 @@ docker compose -f compose.prod.yml up -d --force-recreate \
 
 N'utilise pas `docker compose down` pour cette opération : Nginx et PostgreSQL
 peuvent rester en fonctionnement.
+
+## Réinitialiser le mot de passe administrateur
+
+Pour réinitialiser le mot de passe de l'administration du portfolio,
+connecter au VPS puis exécute la commande Strapi dans le conteneur correspondant:
+
+```bash
+ssh deploy@vps-8946ad23
+cd /opt/generateur-portfolio/backend
+
+docker compose -f compose.prod.yml exec strapi_correspondant \
+  npm run strapi -- admin:reset-user-password \
+  --email 'your-admin-email@example.com' \
+  --password 'A-new-long-unique-password'
+```
+
+Remplace l'adresse e-mail par celle du compte administrateur concerné et choisis
+un mot de passe long et unique. Cette commande ne redémarre pas les services et
+ne modifie ni les contenus, ni les médias. L'administration Aijing est
+accessible à `https://api-portfolio-aijing.aijing.li/admin`.
 
 ## Vérifications après démarrage
 

@@ -1,0 +1,15 @@
+{
+  "name": "generateur-portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint backend/app/config backend/app/src packages/vanilla-engine/src packages/vanilla-engine/tests sites",
+    "test:vanilla-engine": "node --test packages/vanilla-engine/tests/*.test.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.1",
+    "globals": "^17.12.0",
+    "typescript-eslint": "^8.69.0"
+  }
+}

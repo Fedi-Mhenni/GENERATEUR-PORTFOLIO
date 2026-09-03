@@ -1,4 +1,5 @@
 /.idea
+/node_modules/
 
 # Artefacts statiques créés pour les déploiements Vercel
 dist/
