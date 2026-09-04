@@ -53,6 +53,18 @@ services:
       - uploads_a:/app/public/uploads
     expose:
       - "1337"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:1337/admin').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     mem_limit: 2g
     networks:
       - strapi_a_network
@@ -69,6 +81,18 @@ services:
       - uploads_b:/app/public/uploads
     expose:
       - "1337"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:1337/admin').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     mem_limit: 2g
     networks:
       - strapi_b_network
@@ -85,6 +109,18 @@ services:
       - uploads_c:/app/public/uploads
     expose:
       - "1337"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:1337/admin').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     mem_limit: 2g
     networks:
       - strapi_c_network
