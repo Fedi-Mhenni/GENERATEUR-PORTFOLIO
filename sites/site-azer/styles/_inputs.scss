@@ -1,0 +1,42 @@
+@use "variables" as *;
+
+.input {
+  display: block;
+  width: 100%;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-surface;
+  border-radius: $radius-sm;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  color: $color-text;
+  background-color: $color-white;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+
+  &:focus-visible,
+  &.input--focus {
+    outline: none;
+    border-color: $color-accent;
+    box-shadow: 0 0 0 $focus-outline-width rgba($color-accent, 0.25);
+  }
+
+  &.input--error {
+    border-color: $color-error;
+    color: $color-text;
+
+    &:focus-visible {
+      outline: $focus-outline-width solid $color-error;
+      outline-offset: $focus-outline-offset;
+    }
+  }
+
+  &.input--disabled,
+  &:disabled {
+    background-color: $color-surface;
+    color: $color-text-secondary;
+    cursor: not-allowed;
+  }
+}

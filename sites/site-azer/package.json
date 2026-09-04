@@ -1,0 +1,11 @@
+{
+  "name": "site-azer",
+  "private": true,
+  "scripts": {
+    "build:scss": "sass styles/main.scss:styles/main.css --no-source-map",
+    "watch:scss": "sass --watch styles/main.scss:styles/main.css"
+  },
+  "devDependencies": {
+    "sass": "^1.97.3"
+  }
+}

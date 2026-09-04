@@ -1,0 +1,372 @@
+@use "variables" as *;
+
+$color-contact-label: #185be0;
+$color-contact-card-bg: rgba(217, 217, 217, 0.14);
+$color-contact-card-border: #ceb8b8;
+$color-form-card-bg: #f9f9f9;
+$color-form-input-bg: #fefefd;
+$color-form-note-bg: #eef0fd;
+$color-form-error: $color-danger;
+$color-form-success: #15803d;
+$color-note-text: #171616;
+$color-note-border: rgba(0, 0, 0, 0.08);
+
+// Largeur partagée entre le bouton "Send message" et la note en dessous
+// (non fournie par le Figma en px exact, seule la contrainte "même
+// largeur" l'était) : suffisante pour le texte le plus long ("I usually
+// reply within 24 hours") sur une ligne à 14px.
+$contact-form-footer-width: 260px;
+
+.contact-page {
+  margin-left: $sidebar-collapsed-width;
+  padding: $space-6 $space-7 $space-7;
+}
+
+.contact-header {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  margin-bottom: $space-6;
+}
+
+// Décor discret, purement esthétique (espace visuel moins vide en haut
+// à droite) : formes simples en CSS, tokens du design system, opacité
+// faible pour ne jamais gêner la lecture du texte au-dessus (z-index).
+.contact-header-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.contact-header-shape-1,
+.contact-header-shape-2,
+.contact-header-shape-3 {
+  position: absolute;
+  border-radius: $radius-full;
+}
+
+.contact-header-shape-1 {
+  top: 0;
+  right: 15%;
+  width: 70px;
+  height: 70px;
+  background-color: $color-primary;
+  opacity: 0.12;
+}
+
+.contact-header-shape-2 {
+  top: 60px;
+  right: 6%;
+  width: 42px;
+  height: 42px;
+  background-color: $color-accent;
+  opacity: 0.15;
+}
+
+.contact-header-shape-3 {
+  top: 10px;
+  right: 4%;
+  width: 22px;
+  height: 22px;
+  background-color: $color-warning;
+  opacity: 0.2;
+}
+
+.contact-label,
+.contact-header h1,
+.contact-subtitle {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-label {
+  margin: 0;
+  font-family: $font-family;
+  font-size: 24px;
+  font-weight: 800;
+  color: $color-contact-label;
+}
+
+.contact-header h1 {
+  margin: $space-2 0 0;
+  font-family: $font-family;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  color: $color-text;
+}
+
+.contact-subtitle {
+  max-width: 640px;
+  margin: $space-3 auto 0;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  font-weight: $font-weight-body;
+  color: $color-text-secondary;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: $space-5;
+  align-items: start;
+}
+
+.contact-info-card {
+  background-color: $color-contact-card-bg;
+  border: 1px solid $color-contact-card-border;
+  border-radius: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  padding: $space-5;
+}
+
+.contact-info-card h2,
+.contact-form-card h2 {
+  margin: 0 0 $space-4;
+  font-family: $font-family;
+  font-size: 24px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact-info-item {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.contact-info-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+}
+
+.contact-info-icon-primary {
+  background-color: $color-primary;
+  color: $color-white;
+}
+
+// $color-success est trop clair pour une icône blanche (2.28:1, sous le
+// seuil AA 3:1 pour un composant graphique) : $color-text à la place
+// (8.29:1), même correctif déjà appliqué sur les pages de détail projet.
+.contact-info-icon-success {
+  background-color: $color-success;
+  color: $color-text;
+}
+
+.contact-info-icon-dark {
+  background-color: $color-text;
+  color: $color-white;
+}
+
+.contact-info-item h3 {
+  margin: 0;
+  font-family: $font-family;
+  font-size: 20px;
+  font-weight: 500;
+  color: $color-text;
+}
+
+.contact-info-item p {
+  margin: $space-1 0 0;
+  font-family: $font-family;
+  font-size: 15px;
+  font-weight: 300;
+  color: $color-text-secondary;
+  word-break: break-word;
+}
+
+.contact-form-card {
+  background-color: $color-form-card-bg;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  padding: $space-5;
+}
+
+.contact-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  margin-bottom: $space-3;
+}
+
+.contact-form-field label {
+  font-family: $font-family;
+  font-size: $font-size-small;
+  font-weight: $font-weight-small;
+  color: $color-text;
+}
+
+.contact-form-card .input {
+  background-color: $color-form-input-bg;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.contact-form-card textarea.input {
+  min-height: 120px;
+  resize: vertical;
+  font-family: $font-family;
+}
+
+.contact-form-error {
+  min-height: 18px;
+  font-family: $font-family;
+  font-size: $font-size-caption;
+  font-weight: $font-weight-small;
+  color: $color-form-error;
+}
+
+.contact-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  width: $contact-form-footer-width;
+  height: 45px;
+  margin: 0 auto;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 7px;
+  background-color: $color-accent;
+  color: $color-white;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-sizing: border-box;
+
+  .icon {
+    color: $color-white;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.contact-form-status {
+  margin: $space-3 0 0;
+  font-family: $font-family;
+  font-size: $font-size-small;
+  font-weight: $font-weight-small;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.contact-form-status--success {
+  color: $color-form-success;
+}
+
+.contact-form-status--error {
+  color: $color-form-error;
+}
+
+.contact-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  width: $contact-form-footer-width;
+  margin: $space-4 auto 0;
+  padding: $space-3 $space-4;
+  border: 1px solid $color-note-border;
+  border-radius: 7px;
+  background-color: $color-form-note-bg;
+  box-sizing: border-box;
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 200;
+  color: $color-note-text;
+
+  .icon {
+    flex-shrink: 0;
+    color: $color-note-text;
+  }
+}
+
+.contact-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+  margin-top: $space-4;
+}
+
+// Même teinte de survol que .btn-danger dans _buttons.scss, redéfinie
+// localement (convention déjà en place : chaque partial garde ses
+// propres constantes de page plutôt que de partager des tokens
+// non exposés globalement).
+$color-contact-danger-hover: #c40000;
+
+.contact-download-cv {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  border-radius: $radius-lg;
+  background-color: $color-danger;
+  color: $color-white;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  font-weight: $font-weight-small;
+  text-decoration: none;
+
+  .icon {
+    color: $color-white;
+  }
+
+  &:hover {
+    background-color: $color-contact-danger-hover;
+  }
+}
+
+.contact-social-links {
+  display: flex;
+  gap: $space-2;
+}
+
+.contact-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  background-color: $color-surface;
+  color: $color-text;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  .icon {
+    color: currentColor;
+  }
+
+  &:hover {
+    background-color: $color-primary;
+    color: $color-white;
+  }
+}
+
+@media (max-width: 900px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}

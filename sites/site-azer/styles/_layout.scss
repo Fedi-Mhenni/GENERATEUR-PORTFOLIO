@@ -1,0 +1,87 @@
+@use "variables" as *;
+
+.page-layout {
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  width: $sidebar-collapsed-width;
+  overflow: hidden;
+  gap: $space-6;
+  padding: $space-5 $space-4;
+  background-color: $color-surface;
+  transition: width 0.2s ease;
+
+  &:hover,
+  &:focus-within {
+    width: $sidebar-expanded-width;
+  }
+}
+
+.sidebar a span:not(.icon) {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar:hover a span:not(.icon),
+.sidebar:focus-within a span:not(.icon) {
+  opacity: 1;
+  width: auto;
+}
+
+.sidebar-nav,
+.sidebar-social {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2;
+    border-radius: $radius-sm;
+    font-family: $font-family;
+    color: $color-text;
+    text-decoration: none;
+
+    &:hover {
+      background-color: rgba($color-primary, 0.08);
+      color: $color-primary;
+    }
+  }
+}
+
+.sidebar-nav a {
+  font-size: $font-size-body;
+  font-weight: $font-weight-small;
+}
+
+.sidebar-nav a.is-active {
+  background-color: rgba($color-primary, 0.08);
+  color: $color-primary;
+  font-weight: 600;
+}
+
+.sidebar-social {
+  margin-top: auto;
+}
+
+.sidebar-social a {
+  font-size: $font-size-small;
+  color: $color-text-secondary;
+}
+
+.sidebar-cv {
+  gap: $space-2;
+}
