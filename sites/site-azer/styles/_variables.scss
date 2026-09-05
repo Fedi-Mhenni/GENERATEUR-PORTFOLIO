@@ -11,22 +11,25 @@ $color-white: #ffffff;
 
 $font-family: "Inter", sans-serif;
 
-$font-size-h1: 40px;
+// Unites relatives (rem, base 16px) plutot que px fixe : respecte la
+// taille de police par defaut choisie par l'utilisateur dans son
+// navigateur (WCAG 1.4.4).
+$font-size-h1: 2.5rem; // 40px
 $font-weight-h1: 700;
 
-$font-size-h2: 32px;
+$font-size-h2: 2rem; // 32px
 $font-weight-h2: 800;
 
-$font-size-h3: 24px;
+$font-size-h3: 1.5rem; // 24px
 $font-weight-h3: 600;
 
-$font-size-body: 16px;
+$font-size-body: 1rem; // 16px
 $font-weight-body: 400;
 
-$font-size-small: 14px;
+$font-size-small: 0.875rem; // 14px
 $font-weight-small: 500;
 
-$font-size-caption: 12px;
+$font-size-caption: 0.75rem; // 12px
 $font-weight-caption: 300;
 
 $space-1: 4px;

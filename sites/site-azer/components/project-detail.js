@@ -195,7 +195,7 @@ function sourceCodeSection(project) {
 export default function ProjectDetail(project) {
   return {
     type: "main",
-    attributes: [["class", ["projects-page", "project-detail-page"]]],
+    attributes: [["id", "main-content"], ["tabindex", "-1"], ["class", ["projects-page", "project-detail-page"]]],
     children: [
       backLink(),
       heroSection(project),

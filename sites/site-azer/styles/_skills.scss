@@ -26,7 +26,7 @@ $color-frontend-badge: #5923fa;
 .skills-header h1 {
   margin: 0;
   font-family: $font-family;
-  font-size: clamp(36px, 6vw, 62px);
+  font-size: clamp(2.25rem, 6vw, 3.875rem); // 36px - 62px
   font-weight: 600;
   color: $color-white;
 }
@@ -35,7 +35,7 @@ $color-frontend-badge: #5923fa;
   margin: 26px auto 0;
   max-width: 840px;
   font-family: $font-family;
-  font-size: 23.107px;
+  font-size: 1.4442rem; // 23.107px
   font-weight: $font-weight-body;
   color: $color-white;
 }
@@ -187,5 +187,17 @@ $color-frontend-badge: #5923fa;
 
   .skill-card-illustration {
     align-self: center;
+  }
+}
+
+// Reflow a 320-400px (WCAG 1.4.10) : le padding de page ($space-7)
+// depasserait la largeur disponible une fois la sidebar (72px) deduite.
+@media (max-width: 400px) {
+  .skills-header {
+    padding: 42px $space-4 50px;
+  }
+
+  .skills-grid {
+    padding: $space-6 $space-4 0;
   }
 }

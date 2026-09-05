@@ -163,7 +163,7 @@
 .home-project-card-body h3 {
   margin: 0 0 $space-2;
   font-family: $font-family;
-  font-size: 18px;
+  font-size: 1.125rem; // 18px
   font-weight: 600;
   color: $color-text;
 }
@@ -183,7 +183,7 @@
   background-color: $color-surface;
   color: $color-text-secondary;
   font-family: $font-family;
-  font-size: 12px;
+  font-size: 0.75rem; // 12px
   font-weight: 500;
 
   .icon,
@@ -210,5 +210,30 @@
 
   .home-projects-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+// Reflow a 320-400px (zoom 400% equivalent, WCAG 1.4.10) : la marge
+// laterale de $space-7 (64px) et le visuel decoratif fixe (280px)
+// depasseraient la largeur disponible une fois la sidebar (72px)
+// deduite. On reduit le padding et la taille du visuel plutot que de
+// forcer un defilement horizontal.
+@media (max-width: 400px) {
+  .hero {
+    padding: $space-4;
+  }
+
+  .home-projects {
+    padding: 0 $space-4 $space-4;
+  }
+
+  .hero-visual {
+    width: 160px;
+    height: 160px;
+  }
+
+  .hero-photo {
+    width: 130px;
+    height: 130px;
   }
 }

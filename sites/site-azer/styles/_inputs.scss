@@ -20,7 +20,7 @@
   &.input--focus {
     outline: none;
     border-color: $color-accent;
-    box-shadow: 0 0 0 $focus-outline-width rgba($color-accent, 0.25);
+    box-shadow: 0 0 0 $focus-outline-width $color-accent;
   }
 
   &.input--error {

@@ -1,4 +1,5 @@
 import Sidebar from "../components/sidebar.js";
+import SkipLink from "../components/skip-link.js";
 import ProjectDetail from "../components/project-detail.js";
 import { getProfil } from "../services/strapi-api.js";
 
@@ -174,13 +175,13 @@ export default async function ProjetDetailPage({ slug }) {
     ? ProjectDetail(project)
     : {
         type: "main",
-        attributes: [["class", ["projects-page"]]],
+        attributes: [["id", "main-content"], ["tabindex", "-1"], ["class", ["projects-page"]]],
         children: [{ type: "h1", children: ["Projet introuvable"] }],
       };
 
   return {
     type: "div",
     attributes: [["class", ["page-layout"]]],
-    children: [Sidebar(profil, "/projects"), content],
+    children: [SkipLink(), Sidebar(profil, "/projects"), content],
   };
 }

@@ -1,4 +1,5 @@
 import Sidebar from "../components/sidebar.js";
+import SkipLink from "../components/skip-link.js";
 import { getProfil } from "../services/strapi-api.js";
 
 const SKILL_CATEGORIES = [
@@ -115,10 +116,11 @@ export default async function AboutPage() {
     type: "div",
     attributes: [["class", ["page-layout"]]],
     children: [
+      SkipLink(),
       Sidebar(profil, "/about"),
       {
         type: "main",
-        attributes: [["class", ["skills-page"]]],
+        attributes: [["id", "main-content"], ["tabindex", "-1"], ["class", ["skills-page"]]],
         children: [
           {
             type: "header",

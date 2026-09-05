@@ -1,4 +1,5 @@
 import Sidebar from "../components/sidebar.js";
+import SkipLink from "../components/skip-link.js";
 import BrowserLink from "../vanilla-engine/src/router/link.js";
 import resolveImageUrl from "../vanilla-engine/src/utils/resolve-url.js";
 import getTechIconClasses from "../lib/tech-icons.js";
@@ -105,7 +106,7 @@ function homeProjectCard(project) {
       type: "img",
       attributes: [
         ["src", project.screenshot],
-        ["alt", `Capture d'écran du projet ${project.title}`],
+        ["alt", ""],
         ["class", ["home-project-card-image"]],
       ],
     },
@@ -135,10 +136,11 @@ export default async function HomePage() {
     type: "div",
     attributes: [["class", ["page-layout"]]],
     children: [
+      SkipLink(),
       Sidebar(profil, "/"),
       {
         type: "main",
-        attributes: [["class", ["home-page"]]],
+        attributes: [["id", "main-content"], ["tabindex", "-1"], ["class", ["home-page"]]],
         children: [
           {
             type: "section",

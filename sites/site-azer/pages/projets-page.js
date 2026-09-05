@@ -1,4 +1,5 @@
 import Sidebar from "../components/sidebar.js";
+import SkipLink from "../components/skip-link.js";
 import BrowserLink from "../vanilla-engine/src/router/link.js";
 import ProjectBadge from "../components/project-badge.js";
 import getTechIconClasses from "../lib/tech-icons.js";
@@ -76,10 +77,11 @@ export default async function ProjetsPage() {
     type: "div",
     attributes: [["class", ["page-layout"]]],
     children: [
+      SkipLink(),
       Sidebar(profil, "/projects"),
       {
         type: "main",
-        attributes: [["class", ["projects-page"]]],
+        attributes: [["id", "main-content"], ["tabindex", "-1"], ["class", ["projects-page"]]],
         children: [
           {
             type: "header",
@@ -87,7 +89,7 @@ export default async function ProjetsPage() {
             children: [
               {
                 type: "div",
-                attributes: [["class", ["projects-header-decor"]]],
+                attributes: [["class", ["projects-header-decor"]], ["aria-hidden", "true"]],
                 children: [
                   { type: "span", attributes: [["class", ["projects-header-stripe"]]] },
                   { type: "span", attributes: [["class", ["projects-header-stripe"]]] },

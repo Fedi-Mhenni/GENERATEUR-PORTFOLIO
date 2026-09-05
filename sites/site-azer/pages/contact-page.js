@@ -1,17 +1,26 @@
 import Sidebar from "../components/sidebar.js";
+import SkipLink from "../components/skip-link.js";
 import sendEmail from "../vanilla-engine/src/email/index.js";
 import CvLink from "../components/cv-link.js";
 import { getProfil } from "../services/strapi-api.js";
 import config from "../config.js";
 
 const FIELDS = [
-  { id: "contact-name", name: "nom", label: "Your name", type: "text", placeholder: "e.g. Jouini Azer" },
+  {
+    id: "contact-name",
+    name: "nom",
+    label: "Your name",
+    type: "text",
+    placeholder: "e.g. Jouini Azer",
+    autocomplete: "name",
+  },
   {
     id: "contact-email",
     name: "email",
     label: "Your email",
     type: "email",
     placeholder: "e.g. hello@example.com",
+    autocomplete: "email",
   },
   { id: "contact-subject", name: "sujet", label: "Subject", type: "text", placeholder: "e.g. Project proposal" },
   {
@@ -111,6 +120,7 @@ function formField(field) {
           ["placeholder", field.placeholder],
           ["aria-required", "true"],
           ["aria-describedby", errorId],
+          ...(field.autocomplete ? [["autocomplete", field.autocomplete]] : []),
         ],
       },
       {
@@ -207,10 +217,11 @@ export default async function ContactPage() {
     type: "div",
     attributes: [["class", ["page-layout"]]],
     children: [
+      SkipLink(),
       Sidebar(profil, "/contact"),
       {
         type: "main",
-        attributes: [["class", ["contact-page"]]],
+        attributes: [["id", "main-content"], ["tabindex", "-1"], ["class", ["contact-page"]]],
         children: [
           {
             type: "header",
@@ -277,7 +288,6 @@ export default async function ContactPage() {
                           ["id", "contact-form-status"],
                           ["class", ["contact-form-status"]],
                           ["role", "status"],
-                          ["aria-live", "polite"],
                         ],
                         children: [],
                       },
@@ -298,7 +308,7 @@ export default async function ContactPage() {
                       CvLink(profil, ["contact-download-cv"]),
                       {
                         type: "div",
-                        attributes: [["class", ["contact-social-links"]], ["aria-label", "Social links"]],
+                        attributes: [["class", ["contact-social-links"]], ["role", "group"], ["aria-label", "Social links"]],
                         children: socialLinks(profil),
                       },
                     ].filter(Boolean),

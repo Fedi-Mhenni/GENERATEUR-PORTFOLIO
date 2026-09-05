@@ -4,6 +4,30 @@
   min-height: 100vh;
 }
 
+// Lien d'évitement (WCAG 2.4.1) : premier élément focusable de chaque
+// page, hors écran tant qu'il n'a pas le focus clavier.
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 1000;
+  padding: $space-2 $space-4;
+  background-color: $color-text;
+  color: $color-white;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  font-weight: $font-weight-small;
+  text-decoration: none;
+  border-radius: 0 0 $radius-sm 0;
+  transition: top 0.15s ease;
+
+  &:focus-visible {
+    top: 0;
+    outline: $focus-outline-width solid $focus-outline-color;
+    outline-offset: $focus-outline-offset;
+  }
+}
+
 .sidebar {
   position: fixed;
   top: 0;

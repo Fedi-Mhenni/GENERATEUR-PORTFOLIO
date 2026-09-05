@@ -18,7 +18,7 @@ export default function CvLink(profil, classNames) {
     ],
     children: [
       { type: "span", attributes: [["class", ["icon", "icon-download"]]] },
-      { type: "span", children: ["Download CV"] },
+      { type: "span", children: ["View CV (PDF, opens in new tab)"] },
     ],
   };
 }
