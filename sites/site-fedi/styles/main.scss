@@ -1,0 +1,38 @@
+// Point d'entrée : compilé seul en CSS (voir README pour la commande).
+// Ordre volontaire : variables (tokens) -> reset -> typographie -> composants.
+@use "variables";
+@use "reset";
+@use "typography";
+@use "components/navbar";
+@use "components/hero";
+@use "components/footer";
+@use "components/about";
+@use "components/contact";
+
+body {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+}
+
+// Sticky footer : chaque page (routée dans #root) est ce wrapper direct. Pas
+// besoin de forcer html/body en height:100% — min-height:100vh se cale sur le
+// viewport indépendamment de la hauteur des ancêtres. Le footer (margin-top:
+// auto, cf. footer.scss) absorbe l'espace restant et colle en bas ; si le
+// contenu dépasse 100vh, la page grandit naturellement au-delà.
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// Conteneur de contenu partagé par toutes les pages (hors navbar/footer, qui
+// gèrent leur propre pleine largeur) : consomme --grid-max-width, jusqu'ici
+// défini dans variables.scss mais jamais utilisé.
+.container {
+  width: 100%;
+  max-width: var(--grid-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-button-padding-x);
+}

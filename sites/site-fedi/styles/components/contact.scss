@@ -1,0 +1,16 @@
+// Contact : le style complet de la page arrive dans une passe dédiée
+// (voir home/about/navbar/footer pour le pattern). Pour l'instant, juste les
+// états du message de résultat de l'envoi (succès/erreur), nécessaires dès
+// le câblage de sendEmail() — couleurs déjà définies dans variables.scss.
+.form__feedback {
+  font-size: var(--font-body);
+  color: var(--color-text-primary);
+}
+
+.form__feedback--success {
+  color: var(--color-state-success);
+}
+
+.form__feedback--error {
+  color: var(--color-state-error);
+}
