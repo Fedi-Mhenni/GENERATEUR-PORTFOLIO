@@ -1,0 +1,216 @@
+// About : titre + bio centrés, puis 2 sections empilées ("What I do",
+// "My Journey") — fidèle à la maquette Figma "A propos — Desktop".
+.about {
+  padding-top: var(--spacing-button-padding-x);
+  // Marge généreuse avant le footer : évite que la dernière section
+  // (Journey) soit collée dessus.
+  padding-bottom: calc(var(--spacing-nav-gap) * 2.5);
+  flex: 1 0 auto; // pousse le footer en bas même si le contenu est court
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-nav-gap) * 1.5);
+}
+
+.about__intro {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-button-padding-y);
+}
+
+.about__title {
+  font-size: var(--font-h1);
+  color: var(--color-text-primary);
+}
+
+.about__bio {
+  font-size: var(--font-body);
+  color: var(--color-text-primary);
+  overflow-wrap: break-word;
+}
+
+.about__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-button-padding-y);
+}
+
+.about__pdf-feedback {
+  font-size: var(--font-caption);
+  color: var(--color-text-primary);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.about__pdf-feedback--error {
+  color: var(--color-state-error);
+}
+
+.about__section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-button-padding-y);
+  text-align: center;
+}
+
+.about__subtitle {
+  font-size: var(--font-h2);
+  color: var(--color-text-primary);
+}
+
+// Accordéon "What I do" : <details>/<summary> natif, gratuit en clavier et
+// lecteur d'écran, pas de JS ni de gestion d'état à écrire.
+.about__accordion {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-button-padding-y) / 2);
+  text-align: left;
+}
+
+.about__accordion-item {
+  background-color: var(--color-bg-accent);
+  border-radius: 12px;
+  padding: var(--spacing-button-padding-y) var(--spacing-button-padding-x);
+}
+
+.about__accordion-title {
+  cursor: pointer;
+  font-size: var(--font-body);
+  color: var(--color-text-primary);
+  list-style: none;
+
+  // Chevron natif retiré (::-webkit-details-marker) au profit d'un chevron
+  // dessiné en CSS, qui pivote à l'ouverture — cohérent sur tous les
+  // navigateurs plutôt que de dépendre du marker natif.
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &::after {
+    content: "▾";
+    transition: transform 0.15s ease;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.about__accordion-item[open] .about__accordion-title::after {
+  transform: rotate(180deg);
+}
+
+.about__accordion-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing-button-padding-y) / 2);
+  margin-top: var(--spacing-button-padding-y);
+}
+
+.about__accordion-skill {
+  font-size: var(--font-caption);
+  color: var(--color-text-button-secondary);
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-pill);
+  padding: 0.35em 0.9em;
+}
+
+.about__tagline {
+  font-size: var(--font-caption);
+  color: var(--color-text-accent-hover);
+}
+
+// Timeline "My Journey" : chaque étape est une ligne à 2 colonnes — un
+// marqueur (rond + trait, largeur fixe) et le contenu (année + détail).
+// Colonne dédiée plutôt qu'un pseudo-élément positionné en absolu sur tout
+// le <li> : le rond et le trait restent identiques et alignés quel que soit
+// le nombre de lignes du texte à côté.
+.about__timeline {
+  width: 100%;
+  max-width: 560px;
+  text-align: left;
+}
+
+.about__timeline-item {
+  display: flex;
+  gap: var(--spacing-button-padding-y);
+  padding-bottom: var(--spacing-nav-gap);
+
+  &:last-child {
+    padding-bottom: 0;
+
+    .about__timeline-marker::after {
+      content: none;
+    }
+  }
+}
+
+.about__timeline-marker {
+  position: relative;
+  flex: 0 0 14px;
+  width: 14px;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--color-bg-button-primary);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 6px;
+    width: 2px;
+    // Rejoint le rond suivant : couvre le reste du marqueur + le gap entre
+    // deux <li> (padding-bottom du <li> courant).
+    bottom: calc(-1 * var(--spacing-nav-gap));
+    background-color: var(--color-border-button-secondary);
+  }
+}
+
+.about__timeline-body {
+  padding-top: 0.05em; // aligne le texte sur le centre du rond
+}
+
+.about__timeline-year {
+  display: block;
+  font-size: var(--font-label);
+  color: var(--color-text-primary);
+  margin-bottom: 0.25em;
+}
+
+.about__timeline-detail {
+  font-size: var(--font-body);
+  color: var(--color-text-accent-hover);
+}
+
+.about__empty {
+  font-size: var(--font-body);
+  color: var(--color-text-accent-hover);
+}
+
+// Une seule media query : les largeurs max (560px) restent déjà confortables
+// sur mobile, seul le padding général profite du conteneur .container.
+@media (max-width: 768px) {
+  .about__accordion,
+  .about__timeline {
+    max-width: 100%;
+  }
+}

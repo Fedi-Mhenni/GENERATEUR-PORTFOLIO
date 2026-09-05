@@ -1,88 +1,206 @@
-import { getProfil, getCompetences } from "../services/strapi-api.js";
-import BrowserLink from "../vanilla-engine/src/router/link.js";
+import { getProfil, getCompetences, getJourneys } from "../services/strapi-api.js";
+import Navbar from "../components/navbar.js";
+import Footer from "../components/footer.js";
 import resolveImageUrl from "../vanilla-engine/src/utils/resolve-url.js";
+import generatePdf from "../vanilla-engine/src/pdf/index.js";
 import config from "../config.js";
 
-// Lien externe (média Strapi, réseau social, mailto) : navigation réelle du
-// navigateur, contrairement à BrowserLink qui intercepte le clic pour le
-// routeur SPA ne convient pas ici (pushState refuse une URL cross-origin).
-function externalLink(url, label) {
+// Lien externe (média Strapi) : même raison qu'ailleurs (home-page.js,
+// footer.js) — pushState refuse une URL cross-origin.
+function externalLink(url, label, classNames) {
   return {
     type: "a",
     attributes: [
       ["href", url],
       ["target", "_blank"],
       ["rel", "noopener noreferrer"],
+      ["class", classNames],
     ],
     children: [label],
   };
 }
 
+// Exporte le contenu de la page (hors Navbar/Footer, non pertinents figés
+// dans un PDF) : .about porte tout ce qui représente réellement "mon
+// portfolio" — bio, compétences, parcours.
+async function handleExportPdf() {
+  const feedback = document.querySelector("[data-pdf-feedback]");
+  feedback.textContent = "";
+  feedback.className = "about__pdf-feedback";
+
+  const cible = document.querySelector(".about");
+  const { success, errors } = await generatePdf(cible, { filename: "portfolio-fedi-mhenni.pdf" });
+
+  if (!success) {
+    feedback.textContent = errors?.[0] ?? "Échec de l'export PDF, réessaie plus tard.";
+    feedback.className = "about__pdf-feedback about__pdf-feedback--error";
+  }
+}
+
+// Groupe les compétences par categorie (accordéon "What I do" de la maquette
+// Figma) — entièrement dérivé des vraies données, aucune catégorie en dur :
+// la maquette montre des catégories d'exemple qui ne correspondent pas
+// forcément aux vraies valeurs "categorie" saisies dans Strapi.
+function groupByCategorie(competences) {
+  const groupes = new Map();
+  for (const competence of competences) {
+    const categorie = competence.categorie || "Autres";
+    if (!groupes.has(categorie)) groupes.set(categorie, []);
+    groupes.get(categorie).push(competence.nom);
+  }
+  return [...groupes.entries()];
+}
+
+// "2025-2026" ou "2025" si une seule des deux dates est renseignée.
+function formatPeriode(dateDebut, dateFin) {
+  const anneeDebut = dateDebut ? new Date(dateDebut).getFullYear() : null;
+  const anneeFin = dateFin ? new Date(dateFin).getFullYear() : null;
+  if (anneeDebut && anneeFin && anneeDebut !== anneeFin) return `${anneeDebut}-${anneeFin}`;
+  return `${anneeDebut ?? anneeFin ?? ""}`;
+}
+
+// Certaines valeurs saisies dans Strapi trainent déjà une virgule ("cursus"
+// terminé par ",") — on la retire avant de rejoindre, sinon on affiche une
+// double virgule ("Bachelor's degree,, École"). Défensif côté code plutôt
+// que de compter sur une saisie toujours propre.
+function formatDetail(cursus, ecole, ville) {
+  return [cursus, ecole, ville]
+    .filter(Boolean)
+    .map((valeur) => valeur.trim().replace(/,+$/, ""))
+    .join(", ");
+}
+
 export default async function AboutPage() {
   const profilData = await getProfil();
-  // Cohérence avec le fallback déjà utilisé dans projets-page.js
-  // (projet.attributes?.titre ?? projet.titre) — normalisé une seule fois
-  // ici plutôt que répété par champ, Strapi 5 renvoie déjà le format à plat.
   const profil = profilData?.attributes ?? profilData;
-  // "titre" a été remplacé par "nom"/"prenom" côté Strapi (profil.titre
-  // n'existe plus). poste/ecole sont de nouveaux champs, affichés en
-  // sous-titre — absents de la maquette précédente, seulement s'ils existent.
-  const nomComplet = `${profil?.prenom ?? ""} ${profil?.nom ?? ""}`.trim();
-  const posteEtEcole = [profil?.poste, profil?.ecole].filter(Boolean).join(", ");
   const competences = await getCompetences();
+  const journeys = await getJourneys();
+  const footer = await Footer();
 
   return {
     type: "div",
+    attributes: [["class", ["page"]]],
     children: [
-      BrowserLink("/", "← Retour à l'accueil"),
+      Navbar(),
       {
-        type: "h1",
-        children: ["À propos"],
-      },
-      profil
-        ? {
-            type: "div",
+        type: "main",
+        attributes: [["class", ["container", "about"]]],
+        children: [
+          {
+            type: "section",
+            attributes: [["class", ["about__intro"]]],
             children: [
-              { type: "h2", children: [nomComplet] },
-              ...(posteEtEcole ? [{ type: "p", children: [posteEtEcole] }] : []),
+              { type: "h1", attributes: [["class", ["about__title"]]], children: ["About me"] },
               {
-                type: "img",
-                attributes: [
-                  ["src", resolveImageUrl(profil.photo?.url, config.STRAPI_ORIGIN)],
-                  ["alt", nomComplet],
+                type: "p",
+                attributes: [["class", ["about__bio"]]],
+                children: [profil?.biographie ?? "Profil non renseigné."],
+              },
+              {
+                type: "div",
+                attributes: [["class", ["about__actions"]]],
+                children: [
+                  ...(profil?.cv
+                    ? [
+                        externalLink(
+                          resolveImageUrl(profil.cv.url, config.STRAPI_ORIGIN),
+                          "Télécharger le CV",
+                          ["btn", "btn--secondary"],
+                        ),
+                      ]
+                    : []),
+                  {
+                    type: "button",
+                    attributes: [["type", "button"], ["class", ["btn", "btn--secondary"]]],
+                    events: [["click", handleExportPdf]],
+                    children: ["Exporter mon portfolio en PDF"],
+                  },
                 ],
               },
-              { type: "p", children: [profil.introduction ?? ""] },
-              { type: "p", children: [profil.biographie ?? ""] },
-              ...(profil.cv
-                ? [
-                    externalLink(
-                      resolveImageUrl(profil.cv.url, config.STRAPI_ORIGIN),
-                      "Télécharger le CV",
-                    ),
-                  ]
-                : []),
-              ...(profil.linkedin ? [externalLink(profil.linkedin, "LinkedIn")] : []),
-              ...(profil.github ? [externalLink(profil.github, "GitHub")] : []),
-              ...(profil.email
-                ? [externalLink(`mailto:${profil.email}`, profil.email)]
-                : []),
+              {
+                type: "p",
+                attributes: [["class", ["about__pdf-feedback"]], ["data-pdf-feedback", "true"]],
+                children: [""],
+              },
             ],
-          }
-        : { type: "p", children: ["Profil non renseigné."] },
-      {
-        type: "h2",
-        children: ["Compétences"],
+          },
+          {
+            type: "section",
+            attributes: [["class", ["about__section"]]],
+            children: [
+              { type: "h2", attributes: [["class", ["about__subtitle"]]], children: ["What I do"] },
+              competences.length > 0
+                ? {
+                    type: "div",
+                    attributes: [["class", ["about__accordion"]]],
+                    children: groupByCategorie(competences).map(([categorie, noms]) => ({
+                      type: "details",
+                      attributes: [["class", ["about__accordion-item"]]],
+                      children: [
+                        {
+                          type: "summary",
+                          attributes: [["class", ["about__accordion-title"]]],
+                          children: [categorie],
+                        },
+                        {
+                          type: "ul",
+                          attributes: [["class", ["about__accordion-list"]]],
+                          children: noms.map((nom) => ({
+                            type: "li",
+                            attributes: [["class", ["about__accordion-skill"]]],
+                            children: [nom],
+                          })),
+                        },
+                      ],
+                    })),
+                  }
+                : { type: "p", attributes: [["class", ["about__empty"]]], children: ["Aucune compétence renseignée"] },
+              {
+                type: "p",
+                attributes: [["class", ["about__tagline"]]],
+                children: ["Passionate about continuous learning & new technologies."],
+              },
+            ],
+          },
+          {
+            type: "section",
+            attributes: [["class", ["about__section"]]],
+            children: [
+              { type: "h2", attributes: [["class", ["about__subtitle"]]], children: ["My Journey"] },
+              journeys.length > 0
+                ? {
+                    type: "ul",
+                    attributes: [["class", ["about__timeline"]]],
+                    children: journeys.map((journey) => ({
+                      type: "li",
+                      attributes: [["class", ["about__timeline-item"]]],
+                      children: [
+                        { type: "span", attributes: [["class", ["about__timeline-marker"]]] },
+                        {
+                          type: "div",
+                          attributes: [["class", ["about__timeline-body"]]],
+                          children: [
+                            {
+                              type: "span",
+                              attributes: [["class", ["about__timeline-year"]]],
+                              children: [formatPeriode(journey.date_debut, journey.date_fin)],
+                            },
+                            {
+                              type: "p",
+                              attributes: [["class", ["about__timeline-detail"]]],
+                              children: [formatDetail(journey.cursus, journey.ecole, journey.ville)],
+                            },
+                          ],
+                        },
+                      ],
+                    })),
+                  }
+                : { type: "p", attributes: [["class", ["about__empty"]]], children: ["Aucun parcours renseigné"] },
+            ],
+          },
+        ],
       },
-      {
-        type: "ul",
-        children: competences.length > 0
-          ? competences.map((competence) => ({
-              type: "li",
-              children: [`${competence.nom} — ${competence.categorie}`],
-            }))
-          : [{ type: "li", children: ["Aucune compétence renseignée"] }],
-      },
+      footer,
     ],
   };
 }

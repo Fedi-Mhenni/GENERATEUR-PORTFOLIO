@@ -1,5 +1,7 @@
 import BrowserLink from "../vanilla-engine/src/router/link.js";
 import validateProps from "../vanilla-engine/src/validation/validate-props.js";
+import sendEmail from "../vanilla-engine/src/email/index.js";
+import config from "../config.js";
 
 const schema = {
   nom: { type: "string", required: true },
@@ -39,9 +41,17 @@ function field(name, label, inputType) {
   };
 }
 
-function handleSubmit(event) {
+// Réinitialise le message de résultat (texte + classe d'état) avant un
+// nouvel envoi ou pour afficher un nouveau résultat.
+function setFeedback(feedback, texte, etat) {
+  feedback.textContent = texte;
+  feedback.className = "form__feedback" + (etat ? ` form__feedback--${etat}` : "");
+}
+
+async function handleSubmit(event) {
   event.preventDefault();
   const form = event.target;
+  const feedback = form.querySelector("[data-feedback]");
 
   const values = {
     nom: form.elements.nom.value,
@@ -56,7 +66,7 @@ function handleSubmit(event) {
   form.querySelectorAll("[data-champ]").forEach((element) => {
     element.textContent = "";
   });
-  form.querySelector("[data-feedback]").textContent = "";
+  setFeedback(feedback, "");
 
   if (!valid) {
     for (const champ of Object.keys(schema)) {
@@ -68,9 +78,16 @@ function handleSubmit(event) {
     return;
   }
 
-  // L'envoi réel (EmailJS, US-032) dépend du Lot 2, pas encore intégré ici.
-  form.querySelector("[data-feedback]").textContent =
-    "L'envoi n'est pas encore disponible.";
+  setFeedback(feedback, "Envoi en cours…");
+
+  const { success, errors: sendErrors } = await sendEmail(values, config.EMAILJS);
+
+  if (success) {
+    setFeedback(feedback, "Message envoyé avec succès !", "success");
+    form.reset();
+  } else {
+    setFeedback(feedback, sendErrors?.[0] ?? "Échec de l'envoi, réessaie plus tard.", "error");
+  }
 }
 
 export default function ContactPage() {
@@ -95,7 +112,7 @@ export default function ContactPage() {
           },
           {
             type: "p",
-            attributes: [["data-feedback", "true"]],
+            attributes: [["class", ["form__feedback"]], ["data-feedback", "true"]],
             children: [""],
           },
         ],

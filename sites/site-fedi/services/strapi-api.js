@@ -34,6 +34,11 @@ export async function getCompetences() {
   return json?.data ?? [];
 }
 
+export async function getJourneys() {
+  const json = await fetchJson(`${config.API_URL}/journeys?sort=date_debut:desc`);
+  return json?.data ?? [];
+}
+
 export async function getProjetBySlug(slug) {
   const json = await fetchJson(
     `${config.API_URL}/projets?filters[slug][$eq]=${encodeURIComponent(slug)}&filters[statut][$eq]=publie&populate=image`,
