@@ -1,10 +1,3 @@
-import config from "../config.js";
-import {
-    getProjets,
-} from "../services/strapi-api.js";
-import resolveImageUrl from "../vanilla-engine/src/utils/resolve-url.js";
-import {BrowserLink} from "../vanilla-engine/src/router/browser-router.js";
-
 export default async function ProjectDetailPage({ slug } = {}) {
     return {
         type:"main",
