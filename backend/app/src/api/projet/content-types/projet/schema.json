@@ -55,10 +55,20 @@
       "type": "text"
     },
     "process": {
-      "type": "string"
+      "type": "text"
     },
     "solution": {
       "type": "text"
+    },
+    "short_description": {
+      "type": "text"
+    },
+    "optional_images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }
