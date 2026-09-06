@@ -134,9 +134,8 @@ function experienceEntries(experiences) {
       ...period(value.dateDebut, value.dateFin),
       ...parcoursImage(value.image, `Image for ${title}`),
       title,
-      description: [company, description]
-        .filter(Boolean)
-        .join(description && company ? "\n\n" : ""),
+      company,
+      description,
       mediaIndex: String(index + 1).padStart(2, "0"),
       mediaLabel: company,
       mediaPosition: "photo-right",
