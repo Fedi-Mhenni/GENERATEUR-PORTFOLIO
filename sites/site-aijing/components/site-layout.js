@@ -17,6 +17,10 @@ export default function SiteLayout(props) {
     console.error("SiteLayout: props invalides —", errors.join(", "));
   }
 
+  const mainClasses = (finalProps.mainClassName ?? "")
+    .split(/\s+/)
+    .filter(Boolean);
+
   return {
     type: "div",
     attributes: [["class", ["site-layout"]]],
@@ -34,7 +38,7 @@ export default function SiteLayout(props) {
       {
         type: "main",
         attributes: [
-          ["class", ["site-layout__main", finalProps.mainClassName ?? ""]],
+          ["class", ["site-layout__main", ...mainClasses]],
           ["id", "main-content"],
           ["tabindex", "-1"],
         ],

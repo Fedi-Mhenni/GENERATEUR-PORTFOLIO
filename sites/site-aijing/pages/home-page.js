@@ -1,24 +1,22 @@
-import config from "../config.js";
-import {
-  getCompetences,
-  getExperiences,
-  getJourneys,
-  getProfil,
-  getProjets,
-} from "../services/strapi-api.js";
-import resolveImageUrl from "../vanilla-engine/src/utils/resolve-url.js";
-
+import SiteLayout from "../components/site-layout.js";
+import getFooterContactProps from "./get-footer-contact-props.js";
 
 export default async function HomePage() {
-  return {
-    type: "main",
-    attributes: [["class", ["page", "page--pending"]]],
-    children: [
-      { type: "h1", children: ["Home"] },
+  const footerProps = await getFooterContactProps();
+
+  return SiteLayout({
+    currentPath: "/",
+    mainClassName: "page page--pending",
+    footerProps,
+    mainChildren: [
+      {
+        type: "h1",
+        children: ["Home"],
+      },
       {
         type: "p",
         children: ["Cette page sera intégrée après Projects."],
       },
     ],
-  };
+  });
 }

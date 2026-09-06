@@ -2,24 +2,12 @@ import AmbientBlur from "../components/ambient-blur.js";
 import ArchivePagination from "../components/archive-pagination.js";
 import ProjectCard from "../components/project-card.js";
 import SiteLayout from "../components/site-layout.js";
-import { getProfil } from "../services/strapi-api.js";
-import adaptProfileToFooterContact from "./adapt-profile-to-footer-contact.js";
-import {
-  footerContactTemporaryData,
-  projectsArchiveCopy,
-  projectsTemporaryData,
-} from "./projects-temporary-data.js";
+import getFooterContactProps from "./get-footer-contact-props.js";
+import { projectsTemporaryData } from "./projects-temporary-data.js";
+import { projectsArchiveCopy } from "./static-site-content.js";
 
 export default async function ProjectsPage() {
-  let footerProps = footerContactTemporaryData;
-
-  try {
-    const profile = await getProfil();
-    footerProps = adaptProfileToFooterContact(profile, footerContactTemporaryData);
-  } catch (error) {
-    // The archive stays usable if this supplementary request is unavailable.
-    console.error("Impossible de charger les liens sociaux Strapi.", error);
-  }
+  const footerProps = await getFooterContactProps();
 
   const requestedPage = Number.parseInt(
     new URLSearchParams(window.location.search).get("page") ?? "1",

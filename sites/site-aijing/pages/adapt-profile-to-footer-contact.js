@@ -1,23 +1,4 @@
-const socialDefinitions = [
-  {
-    field: "linkedin",
-    label: "LinkedIn",
-    iconSrc: "/assets/images/linkedin_logo.png",
-    newTab: true,
-  },
-  {
-    field: "github",
-    label: "GitHub",
-    iconSrc: "/assets/images/github_logo.png",
-    newTab: true,
-  },
-  {
-    field: "email",
-    label: "Mail",
-    iconSrc: "/assets/images/mail_logo.avif",
-    newTab: false,
-  },
-];
+import { footerSocialLinkDefinitions } from "./static-site-content.js";
 
 function nonEmptyString(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -25,7 +6,7 @@ function nonEmptyString(value) {
 
 // This explicit adaptation keeps Strapi's field names out of UI components.
 export default function adaptProfileToFooterContact(profile, footerCopy) {
-  const socialLinks = socialDefinitions.flatMap((definition) => {
+  const socialLinks = footerSocialLinkDefinitions.flatMap((definition) => {
     const value = nonEmptyString(profile?.[definition.field]);
 
     if (!value) {
