@@ -72,6 +72,7 @@ export function getProjetsPage({ page = 1, pageSize = 6 } = {}) {
 
 export function getExperiences() {
   const params = new URLSearchParams({
+    populate: "image",
     "sort[0]": "dateDebut:desc",
     "pagination[page]": "1",
     "pagination[pageSize]": "100",
@@ -93,6 +94,7 @@ export function getCompetences() {
 
 export function getJourneys() {
   const params = new URLSearchParams({
+    populate: "image",
     "sort[0]": "date_debut:desc",
     "pagination[page]": "1",
     "pagination[pageSize]": "100",

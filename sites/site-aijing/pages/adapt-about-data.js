@@ -30,6 +30,26 @@ function period(start, end) {
   };
 }
 
+function preferredImage(media) {
+  return media?.formats?.large ?? media ?? null;
+}
+
+function firstImage(media) {
+  const images = Array.isArray(media) ? media : [media];
+  return preferredImage(images.find(Boolean));
+}
+
+function parcoursImage(media, fallbackAlt) {
+  const image = firstImage(media);
+
+  return {
+    imageUrl: resolveImageUrl(image?.url, config.API_ORIGIN),
+    imageAlt: nonEmptyString(image?.alternativeText) || fallbackAlt,
+    imageWidth: image?.width || 0,
+    imageHeight: image?.height || 0,
+  };
+}
+
 function profileDetails(profile) {
   if (!profile) {
     return null;
@@ -88,6 +108,7 @@ function journeyEntries(journeys) {
 
     return [{
       ...period(value.date_debut, value.date_fin),
+      ...parcoursImage(value.image, `Image for ${title}`),
       title,
       description: [school, location].filter(Boolean).join(" · "),
       mediaIndex: String(index + 1).padStart(2, "0"),
@@ -111,6 +132,7 @@ function experienceEntries(experiences) {
 
     return [{
       ...period(value.dateDebut, value.dateFin),
+      ...parcoursImage(value.image, `Image for ${title}`),
       title,
       description: [company, description]
         .filter(Boolean)
