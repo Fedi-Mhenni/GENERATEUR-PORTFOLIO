@@ -6,25 +6,6 @@ export const projectsArchiveCopy = {
   introduction: "A selection of school projects and personal projects.",
 };
 
-export const footerContactCopy = {
-  title: "Contact",
-  introduction:
-    "Have a project, a question, or a thought to share? Send me a message.",
-  formLabel: "Contact form",
-  nameLabel: "Name",
-  namePlaceholder: "Your name",
-  emailLabel: "Email",
-  emailPlaceholder: "name@example.com",
-  messageLabel: "Message",
-  messagePlaceholder: "Write your message…",
-  consentLabel:
-    "I agree that the information entered will be used to contact me back.",
-  submitLabel: "Send message",
-  illustrationSrc: "/assets/images/send_message.png",
-  illustrationWidth: 861,
-  illustrationHeight: 663,
-};
-
 export const footerSocialLinkDefinitions = [
   {
     field: "linkedin",
@@ -45,3 +26,23 @@ export const footerSocialLinkDefinitions = [
     newTab: false,
   },
 ];
+
+export const footerContactCopy = {
+  title: "Contact",
+  introduction:
+    "Have a project, a question, or a thought to share? Send me a message.",
+  formLabel: "Contact form",
+  nameLabel: "Name",
+  namePlaceholder: "Your name",
+  emailLabel: "Email",
+  emailPlaceholder: "name@example.com",
+  messageLabel: "Message",
+  messagePlaceholder: "Write your message…",
+  consentLabel:
+    "I agree that the information entered will be used to contact me back.",
+  submitLabel: "Send message",
+  illustrationSrc: "/assets/images/send_message.png",
+  illustrationWidth: 861,
+  illustrationHeight: 663,
+  socialLinks: footerSocialLinkDefinitions.map(({ field, ...link }) => link),
+};
