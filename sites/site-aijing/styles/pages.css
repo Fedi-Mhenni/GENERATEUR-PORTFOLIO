@@ -158,6 +158,140 @@
   transform: translateX(-50%);
 }
 
+.about-page {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-paper);
+}
+
+.about-page__content {
+  position: relative;
+  display: grid;
+  width: min(100% - 10rem, 80rem);
+  gap: var(--space-4xl);
+  margin-inline: auto;
+  padding-top: 9rem;
+  padding-bottom: var(--space-4xl);
+}
+
+.about-page__introduction,
+.about-page__skills,
+.about-page__parcours-section,
+.about-page__status {
+  position: relative;
+  z-index: 1;
+}
+
+.about-page__introduction {
+  display: grid;
+  grid-template-columns: 26.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 7rem;
+  min-height: 35rem;
+  border-bottom: var(--border-thin) solid var(--color-ink);
+}
+
+.about-page__introduction--without-portrait {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
+  padding-block: var(--space-3xl);
+}
+
+.about-page__portrait {
+  width: 26.25rem;
+  height: 32.5rem;
+  border: var(--border-thin) solid var(--color-ink);
+  object-fit: cover;
+}
+
+.about-page__biography {
+  display: grid;
+  align-content: start;
+  max-width: 40.625rem;
+  gap: var(--space-md);
+}
+
+.about-page__eyebrow,
+.about-page__biography h1,
+.about-page__biography-copy,
+.about-page__feedback,
+.about-page__section-heading h2,
+.about-page__partial-feedback,
+.about-page__status h1,
+.about-page__status p {
+  margin: 0;
+}
+
+.about-page__eyebrow,
+.about-page__biography-copy,
+.about-page__feedback,
+.about-page__partial-feedback {
+  color: var(--color-muted);
+}
+
+.about-page__cv-link {
+  justify-self: start;
+  margin-top: var(--space-xs);
+  text-decoration: none;
+}
+
+.about-page__skills,
+.about-page__parcours-section {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.about-page__section-heading {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.about-page__section-heading--end {
+  justify-items: end;
+  border-bottom: var(--border-thin) solid var(--color-ink);
+  padding-bottom: var(--space-xl);
+  text-align: end;
+}
+
+.about-page__education .about-page__section-heading {
+  border-bottom: var(--border-thin) solid var(--color-ink);
+  padding-bottom: var(--space-xl);
+}
+
+.about-page__skill-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.about-page__parcours-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-page__status {
+  display: grid;
+  align-content: start;
+  min-height: 35rem;
+  gap: var(--space-lg);
+  border-bottom: var(--border-thin) solid var(--color-ink);
+  padding-block: var(--space-4xl);
+}
+
+.about-page__focus-slashes {
+  position: absolute;
+  top: 21.25rem;
+  left: 50%;
+  z-index: 0;
+  width: 90rem;
+  max-width: none;
+  height: auto;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
 .project-detail-page {
   position: relative;
   overflow: hidden;
@@ -358,5 +492,37 @@
   .home-page__focus-slashes {
     top: 18rem;
     width: 90rem;
+  }
+
+  .about-page__content {
+    width: min(100% - 2.5rem, 80rem);
+    gap: var(--space-3xl);
+    padding-top: 8rem;
+  }
+
+  .about-page__introduction {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    gap: var(--space-2xl);
+    padding-bottom: var(--space-3xl);
+  }
+
+  .about-page__portrait {
+    width: min(100%, 26.25rem);
+    height: auto;
+    aspect-ratio: 21 / 26;
+  }
+
+  .about-page__skill-groups {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 1fr));
+  }
+
+  .about-page__status {
+    min-height: 0;
+    padding-block: var(--space-3xl);
+  }
+
+  .about-page__focus-slashes {
+    top: 18rem;
   }
 }

@@ -407,8 +407,8 @@ textarea.form-field__control {
 }
 
 .parcours__media {
-  grid-area: media;
   display: flex;
+  height: 9.75rem;
   min-height: 9.75rem;
   overflow: hidden;
   flex-direction: column;
@@ -433,7 +433,6 @@ textarea.form-field__control {
 }
 
 .parcours__content {
-  grid-area: content;
   display: grid;
   align-content: start;
   gap: var(--space-sm);
@@ -448,6 +447,10 @@ textarea.form-field__control {
 .parcours__description,
 .parcours__period {
   color: var(--color-muted);
+}
+
+.parcours__description {
+  white-space: pre-line;
 }
 
 .parcours__period {

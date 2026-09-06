@@ -71,13 +71,32 @@ export function getProjetsPage({ page = 1, pageSize = 6 } = {}) {
 }
 
 export function getExperiences() {
-  return get("/experiences");
+  const params = new URLSearchParams({
+    "sort[0]": "dateDebut:desc",
+    "pagination[page]": "1",
+    "pagination[pageSize]": "100",
+  });
+
+  return get(`/experiences?${params}`);
 }
 
 export function getCompetences() {
-  return get("/competences");
+  const params = new URLSearchParams({
+    "sort[0]": "categorie:asc",
+    "sort[1]": "nom:asc",
+    "pagination[page]": "1",
+    "pagination[pageSize]": "100",
+  });
+
+  return get(`/competences?${params}`);
 }
 
 export function getJourneys() {
-  return get("/journeys");
+  const params = new URLSearchParams({
+    "sort[0]": "date_debut:desc",
+    "pagination[page]": "1",
+    "pagination[pageSize]": "100",
+  });
+
+  return get(`/journeys?${params}`);
 }
