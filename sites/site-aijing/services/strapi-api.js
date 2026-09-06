@@ -34,9 +34,35 @@ export function getLatestProjets() {
   return get(`/projets?${params}`);
 }
 
+export async function getProjetBySlug(slug) {
+  const params = new URLSearchParams({
+    populate: "image",
+    "filters[slug][$eq]": slug,
+    "pagination[pageSize]": "1",
+  });
+  const projects = await get(`/projets?${params}`);
+
+  if (!Array.isArray(projects) || projects.length === 0) {
+    return null;
+  }
+
+  return projects[0];
+}
+
+export function getProjetsByDate() {
+  const params = new URLSearchParams({
+    "sort[0]": "date:desc",
+    "pagination[page]": "1",
+    "pagination[pageSize]": "100",
+  });
+
+  return get(`/projets?${params}`);
+}
+
 export function getProjetsPage({ page = 1, pageSize = 6 } = {}) {
   const params = new URLSearchParams({
     populate: "image",
+    "sort[0]": "date:desc",
     "pagination[page]": String(page),
     "pagination[pageSize]": String(pageSize),
   });
