@@ -50,6 +50,15 @@
     },
     "lienGithub": {
       "type": "string"
+    },
+    "context": {
+      "type": "text"
+    },
+    "process": {
+      "type": "string"
+    },
+    "solution": {
+      "type": "text"
     }
   }
 }
