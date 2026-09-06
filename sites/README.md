@@ -11,58 +11,70 @@ Chaque site consomme le framework partagé situé dans `packages/vanilla-engine/
 sites/site-<prenom>/
 ├── index.html
 ├── index.js
-├── config.js
+├── config.js       # configuration de production
+├── config.local.js # configuration de développement, versionnée
 ├── vanilla-engine/ # lien symbolique vers packages/vanilla-engine/ (voir ci-dessous)
 ├── pages/
 ├── routes/
 └── services/
 ```
+## Lancer localement
 
-## Mise en place initiale (une seule fois, après avoir cloné le repo)
-
-Chaque site dépend de `packages/vanilla-engine/`. Pour pouvoir développer et
-tester son site **de façon isolée** (sans dépendre du reste du monorepo),
-chaque étudiant doit créer un lien symbolique vers le framework partagé,
-**depuis son propre dossier** :
+Chaque site utilise le framework partagé situé dans
+`packages/vanilla-engine/`. Après un clonage du dépôt, créer une seule fois
+le lien symbolique depuis le dossier du site :
 
 ```bash
 cd sites/site-<prenom>
 ln -s ../../packages/vanilla-engine vanilla-engine
 ```
+** Ceci n'est à faire qu'une fois.
 
-Puis, dans `index.js`, importer le framework via ce lien local plutôt qu'un
-chemin relatif traversant plusieurs dossiers :
+Le lien n’est pas versionné, car il dépend du système de fichiers de chaque
+machine. Il permet au site de charger le framework pendant le développement.
 
-```js
-import BrowserRouter from "./vanilla-engine/src/router/browser-router.js";
+Lancer ensuite Strapi. Dans `backend/.env`, définir l’origine du frontend :
+
+```env
+CORS_ORIGIN=http://localhost:3000
 ```
 
-Ce lien symbolique n'est **pas committé** dans Git (pour éviter tout
-problème de compatibilité entre systèmes d'exploitation) — chacun le recrée
-une fois localement après avoir cloné ou pull le repo.
-
-## Démarrage en développement
-
-Une fois le lien symbolique créé, chaque site peut être servi et testé de
-façon totalement indépendante, directement depuis son propre dossier :
+Puis, depuis `backend/` :
 
 ```bash
-cd sites/site-<prenom>
-npx serve -s -S .
+docker compose up --build -d
 ```
 
-- `-s` : mode SPA (redirige les routes inconnues vers `index.html`, nécessaire
-  pour le routeur History API du framework)
-- `-S` : suit les liens symboliques (indispensable, sans ce flag le serveur
-  renvoie une erreur 404 sur tout ce qui passe par `vanilla-engine/`)
+Enfin, depuis la racine du dépôt, construire et servir le site :
 
-Puis ouvrir directement :
-http://localhost:3000/
+```bash
+node scripts/build-site.mjs site-<prenom>
+cp sites/site-<prenom>/config.local.js dist/site-<prenom>/config.js
+npx serve -s dist/site-<prenom>
+```
 
-Aucun préfixe `/sites/site-xxx/` n'est nécessaire avec cette méthode — le
-dossier du site devient lui-même la racine du serveur.
+Ouvrir `http://localhost:3000/`. 
+L’option `-s` permet au routeur SPA de répondre aussi aux routes comme `/projects`. Si le port 3000 est occupé, `serve` choisit un autre port : reporter alors cette origine dans `CORS_ORIGIN`, puis redémarrer Strapi.
 
-## Organisation Git un site, une branche, ses propres commits
+# Configuration locale et production
+
+Les deux fichiers de configuration peuvent être versionnés : ils ne
+contiennent que des URL publiques, jamais de secrets.
+
+- `config.js` contient les URLs de **production** (API HTTPS publique). C’est
+  la configuration qui doit être utilisée pour un build ou un déploiement.
+- `config.local.js` contient les URLs de **développement local** :
+
+
+Le code du site importe toujours `config.js`. Lors du lancement local, la
+commande `cp` remplace donc seulement
+`dist/site-<prenom>/config.js` par `config.local.js`. Le fichier source de
+production n’est jamais modifié.
+
+`dist/` est ignoré par Git. Ne pas déployer cet artefact après la copie locale :
+un déploiement doit être construit à partir du `config.js` de production.
+
+# Organiser un site, une branche, ses propres commits
 
 Chaque étudiant travaille **exclusivement dans son propre dossier**
 (`sites/site-<prenom>/`) et ne doit jamais modifier le dossier d'un autre
