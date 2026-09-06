@@ -488,6 +488,7 @@ export interface ApiExperienceExperience extends Struct.CollectionTypeSchema {
     dateFin: Schema.Attribute.Date;
     description: Schema.Attribute.Text;
     entreprise: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images', true>;
     intitule: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -520,7 +521,7 @@ export interface ApiJourneyJourney extends Struct.CollectionTypeSchema {
     date_debut: Schema.Attribute.Date;
     date_fin: Schema.Attribute.Date;
     ecole: Schema.Attribute.String;
-    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

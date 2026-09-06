@@ -105,8 +105,7 @@ export default function Parcours(props) {
         attributes: [["class", ["parcours__period"]]],
         children: [
           finalProps.periodStart ?? "",
-          "\n–\n",
-          finalProps.periodEnd ?? "",
+          ...(finalProps.periodEnd ? ["\n–\n", finalProps.periodEnd] : []),
         ],
       },
     ],
