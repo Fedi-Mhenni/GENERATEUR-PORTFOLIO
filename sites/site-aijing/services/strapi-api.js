@@ -23,6 +23,17 @@ export function getProjets() {
   return get("/projets?populate=image");
 }
 
+export function getLatestProjets() {
+  const params = new URLSearchParams({
+    populate: "image",
+    "sort[0]": "date:desc",
+    "pagination[page]": "1",
+    "pagination[pageSize]": "3",
+  });
+
+  return get(`/projets?${params}`);
+}
+
 export function getProjetsPage({ page = 1, pageSize = 6 } = {}) {
   const params = new URLSearchParams({
     populate: "image",

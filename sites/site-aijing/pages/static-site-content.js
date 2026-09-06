@@ -6,6 +6,18 @@ export const projectsArchiveCopy = {
   introduction: "A selection of school projects and personal projects.",
 };
 
+export const homeCopy = {
+  heroEyebrow: "01 /",
+  heroTitle: "Aijing Li",
+  heroIntroduction:
+    "Creative developer and UI designer exploring thoughtful digital experiences.",
+  heroCta: "ABOUT ME",
+  latestProjectsEyebrow: "02 / SELECTED WORK",
+  latestProjectsTitle: "Latest Projects",
+  projectDetailLabel: "View project detail",
+  projectsCta: "View all projects",
+};
+
 export const footerSocialLinkDefinitions = [
   {
     field: "linkedin",
