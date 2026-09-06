@@ -12,6 +12,7 @@ const schema = {
   imageWidth: { type: "number", required: false },
   imageHeight: { type: "number", required: false },
   detailLabel: { type: "string", required: false, default: "View project detail" },
+  variant: { type: "string", required: false, default: "archive" },
 };
 
 function projectImage(props) {
@@ -38,9 +39,15 @@ function projectImage(props) {
 
 export default function ProjectCard(props) {
   const { valid, errors, props: finalProps } = validateProps(props, schema);
+  const variant = finalProps.variant === "featured" ? "featured" : "archive";
 
-  if (!valid) {
-    console.error("ProjectCard: props invalides —", errors.join(", "));
+  if (!valid || !["archive", "featured"].includes(finalProps.variant)) {
+    console.error("ProjectCard: props invalides —", [
+      ...errors,
+      ...(!["archive", "featured"].includes(finalProps.variant)
+        ? ["variant doit être archive ou featured"]
+        : []),
+    ].join(", "));
   }
 
   const media = projectImage(finalProps);
@@ -57,7 +64,7 @@ export default function ProjectCard(props) {
   const content = [
     ...metadata,
     {
-      type: "h2",
+      type: variant === "featured" ? "h3" : "h2",
       attributes: [["class", ["project-card__title", "type-heading-secondary"]]],
       children: [finalProps.title ?? "Projet"],
     },
@@ -91,7 +98,7 @@ export default function ProjectCard(props) {
 
   return {
     type: "article",
-    attributes: [["class", ["project-card"]]],
+    attributes: [["class", ["project-card", `project-card--${variant}`]]],
     children: [
       {
         type: "div",

@@ -53,6 +53,111 @@
   list-style: none;
 }
 
+.home-page {
+  overflow: hidden;
+  background: var(--color-paper);
+}
+
+.home-page__content {
+  position: relative;
+  display: grid;
+  width: min(100% - 10rem, 80rem);
+  gap: var(--space-4xl);
+  margin-inline: auto;
+  padding-top: 9rem;
+  padding-bottom: var(--space-4xl);
+}
+
+.home-page__hero {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 38.125rem) 26.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4xl);
+  min-height: 35rem;
+  border-bottom: var(--border-thin) solid var(--color-ink);
+}
+
+.home-page__hero-copy,
+.home-page__latest-projects,
+.home-page__section-heading {
+  display: grid;
+  align-content: start;
+}
+
+.home-page__hero-copy {
+  gap: var(--space-md);
+}
+
+.home-page__hero-copy h1,
+.home-page__hero-introduction,
+.home-page__eyebrow,
+.home-page__section-heading h2,
+.home-page__projects-status {
+  margin: 0;
+}
+
+.home-page__eyebrow,
+.home-page__hero-introduction,
+.home-page__projects-status {
+  color: var(--color-muted);
+}
+
+.home-page__hero-introduction {
+  max-width: 38.125rem;
+}
+
+.home-page__hero-cta,
+.home-page__projects-cta {
+  justify-self: start;
+  text-decoration: none;
+}
+
+.home-page__portrait {
+  width: 26.25rem;
+  height: 32.5rem;
+  border: var(--border-thin) solid var(--color-ink);
+  object-fit: cover;
+}
+
+.home-page__latest-projects {
+  position: relative;
+  z-index: 1;
+  gap: var(--space-xl);
+}
+
+.home-page__section-heading {
+  gap: var(--space-sm);
+}
+
+.home-page__project-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-page__projects-status {
+  min-height: 17.5rem;
+  padding-block: var(--space-2xl);
+  border-bottom: var(--border-thin) solid var(--color-ink);
+}
+
+.home-page__focus-slashes {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 0;
+  width: 90rem;
+  max-width: none;
+  height: 119.9375rem;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
 @media (max-width: 48rem) {
   .projects-page > .ambient-blur {
     top: -12rem;
@@ -65,5 +170,29 @@
     width: min(100% - 2.5rem, 80rem);
     gap: var(--space-3xl);
     padding-top: 8rem;
+  }
+
+  .home-page__content {
+    width: min(100% - 2.5rem, 80rem);
+    gap: var(--space-3xl);
+    padding-top: 8rem;
+  }
+
+  .home-page__hero {
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+    min-height: 0;
+    padding-bottom: var(--space-3xl);
+  }
+
+  .home-page__portrait {
+    width: min(100%, 26.25rem);
+    height: auto;
+    aspect-ratio: 21 / 26;
+  }
+
+  .home-page__focus-slashes {
+    top: 18rem;
+    width: 90rem;
   }
 }

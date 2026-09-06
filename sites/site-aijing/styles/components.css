@@ -268,6 +268,19 @@ textarea.form-field__control {
   text-decoration: none;
 }
 
+.project-card--featured {
+  grid-template-columns: 23.75rem minmax(0, 1fr);
+  min-height: 17.5rem;
+}
+
+.project-card--featured .project-card__media {
+  aspect-ratio: 19 / 12;
+}
+
+.project-card--featured .project-card__content {
+  max-width: 45rem;
+}
+
 .footer-contact {
   border-top: var(--border-thin) solid rgb(116 110 101 / 0.82);
   background: var(--color-paper);
@@ -504,6 +517,16 @@ textarea.form-field__control {
 }
 
 @media (max-width: 48rem) {
+  .project-card--featured {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    padding-block: var(--space-xl);
+  }
+
+  .project-card--featured .project-card__media {
+    width: min(100%, 23.75rem);
+  }
+
   .parcours,
   .parcours--photo-right {
     grid-template-columns: minmax(0, 1fr);
