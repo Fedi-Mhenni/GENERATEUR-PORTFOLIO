@@ -44,5 +44,9 @@ export const footerContactCopy = {
   illustrationSrc: "/assets/images/send_message.png",
   illustrationWidth: 861,
   illustrationHeight: 663,
-  socialLinks: footerSocialLinkDefinitions.map(({ field, ...link }) => link),
+  socialLinks: footerSocialLinkDefinitions.map((definition) => ({
+    label: definition.label,
+    iconSrc: definition.iconSrc,
+    newTab: definition.newTab,
+  })),
 };
