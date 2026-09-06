@@ -516,10 +516,11 @@ export interface ApiJourneyJourney extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    cursus: Schema.Attribute.String;
+    cursus: Schema.Attribute.Text;
     date_debut: Schema.Attribute.Date;
     date_fin: Schema.Attribute.Date;
     ecole: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -600,8 +601,10 @@ export interface ApiProjetProjet extends Struct.CollectionTypeSchema {
       'api::projet.projet'
     > &
       Schema.Attribute.Private;
-    process: Schema.Attribute.String;
+    optional_images: Schema.Attribute.Media<'images', true>;
+    process: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
+    short_description: Schema.Attribute.Text;
     slug: Schema.Attribute.UID;
     solution: Schema.Attribute.Text;
     soustitre: Schema.Attribute.Text;

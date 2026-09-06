@@ -12,7 +12,7 @@
   "pluginOptions": {},
   "attributes": {
     "cursus": {
-      "type": "string"
+      "type": "text"
     },
     "ecole": {
       "type": "string"
@@ -28,6 +28,16 @@
     },
     "pays": {
       "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     }
   }
 }
