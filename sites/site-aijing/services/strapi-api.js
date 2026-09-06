@@ -1,13 +1,17 @@
 import config from "../config.js";
 
-async function get(endpoint) {
+async function request(endpoint) {
   const response = await fetch(`${config.API_URL}${endpoint}`);
 
   if (!response.ok) {
     throw new Error(`Strapi a répondu avec le statut ${response.status}.`);
   }
 
-  const json = await response.json();
+  return response.json();
+}
+
+async function get(endpoint) {
+  const json = await request(endpoint);
   return json.data;
 }
 
@@ -17,6 +21,16 @@ export function getProfil() {
 
 export function getProjets() {
   return get("/projets?populate=image");
+}
+
+export function getProjetsPage({ page = 1, pageSize = 6 } = {}) {
+  const params = new URLSearchParams({
+    populate: "image",
+    "pagination[page]": String(page),
+    "pagination[pageSize]": String(pageSize),
+  });
+
+  return request(`/projets?${params}`);
 }
 
 export function getExperiences() {

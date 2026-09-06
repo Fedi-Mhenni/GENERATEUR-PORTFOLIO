@@ -1,0 +1,173 @@
+import validateProps from "../vanilla-engine/src/validation/validate-props.js";
+import Button from "./button.js";
+import FormField from "./form-field.js";
+import SocialLink from "./social-link.js";
+
+const schema = {
+  title: { type: "string", required: true },
+  introduction: { type: "string", required: false, default: "" },
+  formLabel: { type: "string", required: true },
+  nameLabel: { type: "string", required: true },
+  namePlaceholder: { type: "string", required: false, default: "" },
+  emailLabel: { type: "string", required: true },
+  emailPlaceholder: { type: "string", required: false, default: "" },
+  messageLabel: { type: "string", required: true },
+  messagePlaceholder: { type: "string", required: false, default: "" },
+  consentLabel: { type: "string", required: true },
+  submitLabel: { type: "string", required: true },
+  idPrefix: { type: "string", required: false, default: "contact" },
+  illustrationSrc: { type: "string", required: false, default: "" },
+  illustrationAlt: { type: "string", required: false, default: "" },
+  illustrationWidth: { type: "number", required: false },
+  illustrationHeight: { type: "number", required: false },
+  socialLinks: { type: "array", required: false, default: [] },
+  onSubmit: { type: "function", required: false },
+};
+
+function contactIllustration(props) {
+  if (!props.illustrationSrc) {
+    return null;
+  }
+
+  const attributes = [
+    ["class", ["footer-contact__illustration"]],
+    ["src", props.illustrationSrc],
+    ["alt", props.illustrationAlt],
+  ];
+
+  if (props.illustrationWidth) {
+    attributes.push(["width", props.illustrationWidth]);
+  }
+
+  if (props.illustrationHeight) {
+    attributes.push(["height", props.illustrationHeight]);
+  }
+
+  return {
+    type: "img",
+    attributes,
+  };
+}
+
+export default function FooterContact(props) {
+  const { valid, errors, props: finalProps } = validateProps(props, schema);
+
+  if (!valid) {
+    console.error("FooterContact: props invalides —", errors.join(", "));
+  }
+
+  const prefix = finalProps.idPrefix ?? "contact";
+  const illustration = contactIllustration(finalProps);
+  const socialLinks = (finalProps.socialLinks ?? []).map((link) =>
+    SocialLink(link),
+  );
+
+  return {
+    type: "footer",
+    attributes: [["class", ["footer-contact"]]],
+    children: [
+      {
+        type: "section",
+        attributes: [
+          ["class", ["footer-contact__section", "container"]],
+          ["id", "contact"],
+          ["aria-labelledby", `${prefix}-title`],
+        ],
+        children: [
+          {
+            type: "div",
+            attributes: [["class", ["footer-contact__introduction"]]],
+            children: [
+              {
+                type: "h2",
+                attributes: [
+                  ["class", ["footer-contact__title"]],
+                  ["id", `${prefix}-title`],
+                ],
+                children: [finalProps.title ?? "Contact"],
+              },
+              illustration,
+              {
+                type: "div",
+                attributes: [["class", ["footer-contact__copy"]]],
+                children: [
+                  finalProps.introduction
+                    ? {
+                        type: "p",
+                        attributes: [["class", ["footer-contact__introduction-copy"]]],
+                        children: [finalProps.introduction],
+                      }
+                    : null,
+                  socialLinks.length
+                    ? {
+                        type: "ul",
+                        attributes: [["class", ["footer-contact__social-links"]]],
+                        children: socialLinks.map((link) => ({
+                          type: "li",
+                          children: [link],
+                        })),
+                      }
+                    : null,
+                ].filter(Boolean),
+              },
+            ].filter(Boolean),
+          },
+          {
+            type: "form",
+            attributes: [
+              ["class", ["footer-contact__form"]],
+              ["aria-label", finalProps.formLabel ?? "Formulaire de contact"],
+            ],
+            events: [
+              [
+                "submit",
+                (event) => {
+                  event.preventDefault();
+                  finalProps.onSubmit?.(event);
+                },
+              ],
+            ],
+            children: [
+              FormField({
+                id: `${prefix}-name`,
+                name: "name",
+                label: finalProps.nameLabel ?? "Nom",
+                placeholder: finalProps.namePlaceholder ?? "",
+                autocomplete: "name",
+                required: true,
+              }),
+              FormField({
+                id: `${prefix}-email`,
+                name: "email",
+                label: finalProps.emailLabel ?? "E-mail",
+                placeholder: finalProps.emailPlaceholder ?? "",
+                type: "email",
+                autocomplete: "email",
+                required: true,
+              }),
+              FormField({
+                id: `${prefix}-message`,
+                name: "message",
+                label: finalProps.messageLabel ?? "Message",
+                placeholder: finalProps.messagePlaceholder ?? "",
+                multiline: true,
+                required: true,
+              }),
+              FormField({
+                id: `${prefix}-consent`,
+                name: "consent",
+                label: finalProps.consentLabel ?? "Consentement requis",
+                type: "checkbox",
+                required: true,
+              }),
+              Button({
+                label: finalProps.submitLabel ?? "Envoyer",
+                type: "submit",
+              }),
+            ],
+          },
+        ],
+      },
+    ],
+  };
+}

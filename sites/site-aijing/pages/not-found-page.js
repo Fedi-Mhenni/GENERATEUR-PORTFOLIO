@@ -1,6 +1,6 @@
 export default function Page404() {
   return {
-    type: "section",
+    type: "main",
     attributes: [["class", ["page"]]],
     children: [
       { type: "h1", children: ["Page introuvable"] },
