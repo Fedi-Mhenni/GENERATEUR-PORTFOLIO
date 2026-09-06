@@ -407,6 +407,7 @@ textarea.form-field__control {
 }
 
 .parcours__media {
+  align-self: center;
   display: flex;
   height: 9.75rem;
   min-height: 9.75rem;
@@ -421,7 +422,8 @@ textarea.form-field__control {
 .parcours__image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .parcours__media-index {
@@ -439,9 +441,16 @@ textarea.form-field__control {
 }
 
 .parcours__title,
+.parcours__company,
 .parcours__description,
 .parcours__period {
   margin: 0;
+}
+
+.parcours__company {
+  justify-self: end;
+  color: var(--color-muted);
+  text-align: right;
 }
 
 .parcours__description,
@@ -450,6 +459,7 @@ textarea.form-field__control {
 }
 
 .parcours__description {
+  max-width: 40.625rem;
   white-space: pre-line;
 }
 

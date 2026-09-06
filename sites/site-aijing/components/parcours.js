@@ -5,7 +5,8 @@ const schema = {
   periodStart: { type: "string", required: true },
   periodEnd: { type: "string", required: true },
   title: { type: "string", required: true },
-  description: { type: "string", required: true },
+  company: { type: "string", required: false, default: "" },
+  description: { type: "string", required: false, default: "" },
   mediaIndex: { type: "string", required: false, default: "" },
   mediaLabel: { type: "string", required: false, default: "" },
   imageUrl: { type: "string", required: false, default: "" },
@@ -91,11 +92,20 @@ export default function Parcours(props) {
                 attributes: [["class", ["parcours__title", "type-heading-secondary"]]],
                 children: [finalProps.title ?? "Parcours"],
               },
-              {
-                type: "p",
-                attributes: [["class", ["parcours__description"]]],
-                children: [finalProps.description ?? ""],
-              },
+              ...(finalProps.company
+                ? [{
+                    type: "p",
+                    attributes: [["class", ["parcours__company"]]],
+                    children: [finalProps.company],
+                  }]
+                : []),
+              ...(finalProps.description
+                ? [{
+                    type: "p",
+                    attributes: [["class", ["parcours__description"]]],
+                    children: [finalProps.description],
+                  }]
+                : []),
             ],
           },
         ],

@@ -256,7 +256,7 @@ export default function AboutMePage() {
             type: "img",
             attributes: [
               ["class", ["about-page__focus-slashes"]],
-              ["src", "/assets/images/decorative-focus-slashes.svg"],
+              ["src", "/assets/images/decorative-focus-chevron.svg"],
               ["alt", ""],
               ["aria-hidden", "true"],
               ["width", 1440],
