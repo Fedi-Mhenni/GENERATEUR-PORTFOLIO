@@ -19,8 +19,8 @@ tel quel sur un serveur de production.
 - `src/state/` — gestion d'état réactive : `createStore(initialState)` → `getState()`, `setState(update)`, `subscribe(callback)` (implémenté avec `EventTarget`/`CustomEvent` natifs)
 - `src/validation/` — validation des props de composants : `validateProps(props, schema)` → `{ valid, errors, props }` (voir "Validation des props" ci-dessous)
 - `src/components/` — composants réutilisables : seul `Carte({ titre, soustitre, image, description, lien })` existe pour l'instant (`soustitre` optionnel, `default: ""`) — les 7 autres composants du backlog (header, footer, navigation, listes, pagination, éléments d'expérience, formulaire) sont reportés faute de page ou de donnée réelle les justifiant aujourd'hui
-- `src/utils/` — utilitaires génériques partagés : `resolveImageUrl(url, origin)` (voir "Résolution d'URL de médias" ci-dessous)
-- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`), `string-interpolate.test.js` (`src/prototypes/`), `resolve-url.test.js` (`src/utils/`)
+- `src/utils/` — utilitaires génériques partagés : `resolveImageUrl(url, origin)` (voir "Résolution d'URL de médias" ci-dessous), `getCvUrl(profil, origin)` (voir "Résolution de l'URL du CV" ci-dessous)
+- `tests/` — tests du framework (`node:test`) : `create-store.test.js` (`src/state/`), `validate-props.test.js` (`src/validation/`), `carte.test.js` (`src/components/`), `string-interpolate.test.js` (`src/prototypes/`), `resolve-url.test.js` et `get-cv-url.test.js` (`src/utils/`)
 
 ## Interpolation de chaînes
 
@@ -86,6 +86,30 @@ resolveImageUrl("https://cdn.exemple.com/photo.png", config.STRAPI_ORIGIN);
 // -> inchangée (déjà absolue, ex. CDN externe prévu au Lot 3)
 ```
 
+## Résolution de l'URL du CV
+
+`getCvUrl(profil, origin)` (`src/utils/get-cv-url.js`) retourne l'URL
+complète du CV uploadé dans Strapi (champ média `cv` du content-type
+`profil`), ou `null` si aucun fichier n'a été uploadé — utilise
+`resolveImageUrl` en interne, donc même logique de préfixage d'origine
+que pour une image. Pensé pour un bouton "Download CV" qui pointe
+directement vers le fichier réel plutôt que de le régénérer côté client :
+même `origin` par site que `resolveImageUrl` (déclaré dans le `config.js`
+de chaque site, jamais dans le framework), jamais d'exception si
+`profil` ou `profil.cv` est `null`/`undefined`.
+
+```js
+import getCvUrl from "../utils/get-cv-url.js";
+import config from "../../config.js"; // propre à chaque site
+
+const url = getCvUrl(profil, config.STRAPI_ORIGIN);
+// -> "http://localhost:1337/uploads/cv.pdf", ou null si profil.cv est absent
+
+if (url) {
+  // afficher le bouton "Download CV" (lien direct, attribut `download`)
+}
+```
+
 ## Envoi d'email (EmailService)
 
 `sendEmail(formData, config)` (`src/email/send-email.js`) envoie un email
@@ -104,6 +128,39 @@ qui applique ces règles plus fines avant même d'appeler `sendEmail`). Ça
 
 Si l'appel réseau échoue (déconnexion, DNS, timeout) ou si l'API répond une
 erreur, `sendEmail` retourne `{ success: false, errors }` — jamais
+d'exception non gérée.
+
+## Génération PDF (PdfService)
+
+`generatePdf(element, options)` (`src/pdf/generate-pdf.js`) génère un PDF à
+partir d'un élément DOM via `html2pdf.js`. Le module ne l'importe jamais
+directement (imports réseau `https://` non supportés par le loader ESM de
+Node, utilisé par les tests) : il lit `globalThis.html2pdf` au moment de
+l'appel, exactement comme `sendEmail` lit `globalThis.fetch`.
+
+Le site consommateur est donc responsable de charger `html2pdf.js` et de
+l'exposer sur `window` **une seule fois**, au démarrage (ex. dans son
+`index.js`) :
+
+```js
+import html2pdf from "https://esm.run/html2pdf.js@0.14.0";
+window.html2pdf = html2pdf;
+```
+
+La version est volontairement figée (`@0.14.0`) pour éviter qu'une mise à
+jour silencieuse du CDN ne change de comportement sans qu'on s'en rende
+compte.
+
+```js
+import generatePdf from "./pdf/index.js";
+
+const { success, errors } = await generatePdf(document.querySelector("#cv"), {
+  filename: "cv.pdf",
+});
+```
+
+Si `globalThis.html2pdf` est absent (script non chargé) ou si la génération
+échoue, `generatePdf` retourne `{ success: false, errors }` — jamais
 d'exception non gérée.
 
 ## Utilisation en développement

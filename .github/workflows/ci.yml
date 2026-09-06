@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "packages/**"
+      - "sites/**"
+      - ".github/workflows/ci.yml"
+      - "eslint.config.mjs"
+      - "package.json"
+      - "package-lock.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      vanilla_engine: ${{ steps.filter.outputs.vanilla_engine }}
+      sites: ${{ steps.filter.outputs.sites }}
+      ci: ${{ steps.filter.outputs.ci }}
+
+    steps:
+      - name: Detect changed files
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - "backend/**"
+            vanilla_engine:
+              - "packages/vanilla-engine/**"
+              - "package.json"
+            sites:
+              - "sites/**"
+            ci:
+              - ".github/workflows/ci.yml"
+              - "eslint.config.mjs"
+              - "package-lock.json"
+
+  lint:
+    name: Lint all source code
+    needs: changes
+    if: >-
+      needs.changes.outputs.backend == 'true' ||
+      needs.changes.outputs.vanilla_engine == 'true' ||
+      needs.changes.outputs.sites == 'true' ||
+      needs.changes.outputs.ci == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install lint dependencies
+        run: npm ci
+
+      - name: Lint backend, shared package, and sites
+        run: npm run lint
+
+  vanilla-engine-tests:
+    name: Test shared vanilla engine
+    needs: changes
+    if: >-
+      needs.changes.outputs.vanilla_engine == 'true' ||
+      needs.changes.outputs.ci == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run unit tests
+        run: node --test
+        working-directory: packages/vanilla-engine
+
+  backend:
+    name: Test and build Strapi backend
+    needs: changes
+    if: >-
+      needs.changes.outputs.backend == 'true' ||
+      needs.changes.outputs.ci == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: backend/app
+
+      - name: Run backend tests
+        run: npm test
+        working-directory: backend/app
+
+      - name: Build Strapi admin
+        run: npm run build
+        working-directory: backend/app
