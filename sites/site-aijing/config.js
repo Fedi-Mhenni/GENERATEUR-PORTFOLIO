@@ -1,6 +1,6 @@
 const config = {
-  API_ORIGIN: "https://api-portfolio-aijing.aijing.li", //http://localhost:1337
-  API_URL: "https://api-portfolio-aijing.aijing.li/api",
+  API_ORIGIN: "http://localhost:1337", // http://localhost:1337， https://api-portfolio-aijing.aijing.li
+  API_URL: "http://localhost:1337/api",
 };
 
 export default config;
