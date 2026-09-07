@@ -250,20 +250,7 @@ export default function AboutMePage() {
       {
         type: "div",
         attributes: [["class", ["about-page__content"]]],
-        children: [
-          ...aboutContent(),
-          {
-            type: "img",
-            attributes: [
-              ["class", ["about-page__focus-slashes"]],
-              ["src", "/assets/images/decorative-focus-chevron.svg"],
-              ["alt", ""],
-              ["aria-hidden", "true"],
-              ["width", 1440],
-              ["height", 2529],
-            ],
-          },
-        ],
+        children: aboutContent(),
       },
     ],
   });

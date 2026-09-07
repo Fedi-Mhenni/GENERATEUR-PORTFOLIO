@@ -406,6 +406,15 @@ textarea.form-field__control {
   grid-row: 1;
 }
 
+.parcours--photo-right .parcours__title {
+  justify-self: end;
+  text-align: right;
+}
+
+.parcours--photo-right .parcours__description {
+  justify-self: start;
+}
+
 .parcours__media {
   align-self: center;
   display: flex;
