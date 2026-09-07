@@ -183,10 +183,7 @@ docker compose -f compose.prod.yml exec strapi_correspondant \
   --password 'A-new-long-unique-password'
 ```
 
-Remplace l'adresse e-mail par celle du compte administrateur concerné et choisis
-un mot de passe long et unique. Cette commande ne redémarre pas les services et
-ne modifie ni les contenus, ni les médias. L'administration Aijing est
-accessible à `https://api-portfolio-aijing.aijing.li/admin`.
+Remplace l'adresse e-mail par celle du compte administrateur concerné et choisis un mot de passe long et unique. Cette commande ne redémarre pas les services et ne modifie ni les contenus, ni les médias.
 
 ## Vérifications après démarrage
 

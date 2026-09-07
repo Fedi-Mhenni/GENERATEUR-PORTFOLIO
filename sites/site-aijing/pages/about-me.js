@@ -11,18 +11,10 @@ import adaptAboutData from "./adapt-about-data.js";
 import { getFooterContactPropsFromProfile } from "./get-footer-contact-props.js";
 import { pathFor, t } from "../i18n/index.js";
 
-const aboutState = {
-  status: "loading",
-  data: null,
-  records: null,
-  profileRecord: null,
-  failedSources: [],
-};
+const aboutStates = new Map();
 
-let aboutRequest;
-
-function refreshAboutPage() {
-  if (["/about-me", "/en/about-me", "/fr/a-propos"].includes(window.location.pathname)) {
+function refreshAboutPage(locale) {
+  if (window.location.pathname === pathFor(locale, "about")) {
     window.dispatchEvent(new Event("pushstate"));
   }
 }
@@ -31,39 +23,51 @@ function resultValue(result) {
   return result.status === "fulfilled" ? result.value : null;
 }
 
-function loadAboutData() {
-  if (aboutRequest) {
-    return;
+function loadAboutData(locale) {
+  const existingState = aboutStates.get(locale);
+
+  if (existingState) {
+    return existingState;
   }
 
+  const state = {
+    status: "loading",
+    records: null,
+    profileRecord: null,
+    failedSources: [],
+  };
+  aboutStates.set(locale, state);
+
   const sources = [
-    ["profile", getProfil()],
+    ["profile", getProfil(locale)],
     ["skills", getCompetences()],
-    ["education", getJourneys()],
-    ["experiences", getExperiences()],
+    ["education", getJourneys(locale)],
+    ["experiences", getExperiences(locale)],
   ];
 
-  aboutRequest = Promise.allSettled(sources.map(([, request]) => request))
+  Promise.allSettled(sources.map(([, request]) => request))
     .then((results) => {
-      aboutState.profileRecord = resultValue(results[0]);
-      aboutState.records = {
-        profile: aboutState.profileRecord,
+      state.profileRecord = resultValue(results[0]);
+      state.records = {
+        profile: state.profileRecord,
         competencies: resultValue(results[1]),
         journeys: resultValue(results[2]),
         experiences: resultValue(results[3]),
       };
-      aboutState.failedSources = results.flatMap((result, index) =>
+      state.failedSources = results.flatMap((result, index) =>
         result.status === "rejected" ? [sources[index][0]] : []
       );
-      aboutState.status = aboutState.failedSources.length === sources.length
+      state.status = state.failedSources.length === sources.length
         ? "error"
         : "success";
     })
     .catch((error) => {
       console.error("Impossible de préparer la page About.", error);
-      aboutState.status = "error";
+      state.status = "error";
     })
-    .finally(refreshAboutPage);
+    .finally(() => refreshAboutPage(locale));
+
+  return state;
 }
 
 function pageStatus({ role, title, copy }) {
@@ -176,8 +180,8 @@ function parcoursSection({ label, title, entries, className, alignEnd }) {
   };
 }
 
-function aboutContent(locale) {
-  if (aboutState.status === "loading") {
+function aboutContent(locale, state) {
+  if (state.status === "loading") {
     return [pageStatus({
       role: "status",
       title: t("about.loadingTitle"),
@@ -185,7 +189,7 @@ function aboutContent(locale) {
     })];
   }
 
-  if (aboutState.status === "error") {
+  if (state.status === "error") {
     return [pageStatus({
       role: "alert",
       title: t("about.unavailableTitle"),
@@ -194,12 +198,12 @@ function aboutContent(locale) {
   }
 
   const { profile, skills, journeys, experiences } = adaptAboutData(
-    aboutState.records,
+    state.records,
     locale,
   );
   const sections = [
     introduction(profile),
-    ...(aboutState.failedSources.length
+    ...(state.failedSources.length
       ? [{
           type: "p",
           attributes: [["class", ["about-page__partial-feedback"]], ["role", "status"]],
@@ -241,7 +245,7 @@ function aboutContent(locale) {
 }
 
 export default function AboutMePage({ locale = "en" } = {}) {
-  loadAboutData();
+  const aboutState = loadAboutData(locale);
   const footerProps = getFooterContactPropsFromProfile(aboutState.profileRecord, locale);
 
   return SiteLayout({
@@ -253,7 +257,7 @@ export default function AboutMePage({ locale = "en" } = {}) {
       {
         type: "div",
         attributes: [["class", ["about-page__content"]]],
-        children: aboutContent(locale),
+        children: aboutContent(locale, aboutState),
       },
     ],
   });

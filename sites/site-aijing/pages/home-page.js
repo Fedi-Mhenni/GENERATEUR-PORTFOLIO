@@ -8,41 +8,43 @@ import { getFooterContactPropsFromProfile } from "./get-footer-contact-props.js"
 import { getStaticSiteContent } from "./static-site-content.js";
 import { pathFor, t } from "../i18n/index.js";
 
-const latestProjectsState = {
-  status: "loading",
-  projects: [],
-};
+const latestProjectsStates = new Map();
 
-let latestProjectsRequest;
-
-function refreshHome() {
-  if (/^\/(?:en|fr)?$/.test(window.location.pathname)) {
+function refreshHome(locale) {
+  if (window.location.pathname === pathFor(locale, "home")) {
     window.dispatchEvent(new Event("pushstate"));
   }
 }
 
-function loadLatestProjects() {
-  if (latestProjectsRequest) {
-    return;
+function latestProjectsFor(locale) {
+  const existingState = latestProjectsStates.get(locale);
+
+  if (existingState) {
+    return existingState;
   }
 
-  latestProjectsRequest = getLatestProjets()
+  const state = { status: "loading", projects: [] };
+  latestProjectsStates.set(locale, state);
+
+  getLatestProjets(locale)
     .then((projects) => {
-      latestProjectsState.projects = Array.isArray(projects) ? projects : [];
-      latestProjectsState.status = latestProjectsState.projects.length
+      state.projects = Array.isArray(projects) ? projects : [];
+      state.status = state.projects.length
         ? "success"
         : "empty";
     })
     .catch((error) => {
       console.error("Impossible de charger les derniers projets Strapi.", error);
-      latestProjectsState.status = "error";
+      state.status = "error";
     })
-    .finally(refreshHome);
+    .finally(() => refreshHome(locale));
+
+  return state;
 }
 
-async function loadHomeProfile() {
+async function loadHomeProfile(locale) {
   try {
-    return await getProfil();
+    return await getProfil(locale);
   } catch (error) {
     console.error("Impossible de charger le profil Strapi.", error);
     return null;
@@ -55,8 +57,8 @@ function pageLink(href, label, className) {
   return link;
 }
 
-function latestProjectsContent(locale, homeCopy) {
-  if (latestProjectsState.status === "loading") {
+function latestProjectsContent(locale, homeCopy, state) {
+  if (state.status === "loading") {
     return [{
       type: "p",
       attributes: [["class", ["home-page__projects-status"]], ["role", "status"]],
@@ -64,7 +66,7 @@ function latestProjectsContent(locale, homeCopy) {
     }];
   }
 
-  if (latestProjectsState.status === "error") {
+  if (state.status === "error") {
     return [{
       type: "p",
       attributes: [["class", ["home-page__projects-status"]], ["role", "alert"]],
@@ -72,7 +74,7 @@ function latestProjectsContent(locale, homeCopy) {
     }];
   }
 
-  if (latestProjectsState.status === "empty") {
+  if (state.status === "empty") {
     return [{
       type: "p",
       attributes: [["class", ["home-page__projects-status"]]],
@@ -83,7 +85,7 @@ function latestProjectsContent(locale, homeCopy) {
   return [{
     type: "ol",
     attributes: [["class", ["home-page__project-list"]]],
-    children: latestProjectsState.projects.map((project) => ({
+    children: state.projects.map((project) => ({
       type: "li",
       children: [ProjectCard({
         ...adaptProjectToCard(
@@ -98,9 +100,9 @@ function latestProjectsContent(locale, homeCopy) {
 }
 
 export default async function HomePage({ locale = "en" } = {}) {
-  loadLatestProjects();
+  const latestProjectsState = latestProjectsFor(locale);
   const { homeCopy } = getStaticSiteContent(locale);
-  const profile = await loadHomeProfile();
+  const profile = await loadHomeProfile(locale);
   const hero = adaptProfileToHome(profile, homeCopy);
   const footerProps = getFooterContactPropsFromProfile(profile, locale);
 
@@ -172,7 +174,7 @@ export default async function HomePage({ locale = "en" } = {}) {
                   },
                 ],
               },
-              ...latestProjectsContent(locale, homeCopy),
+              ...latestProjectsContent(locale, homeCopy, latestProjectsState),
               pageLink(pathFor(locale, "projects"), homeCopy.projectsCta, "home-page__projects-cta"),
             ],
           },

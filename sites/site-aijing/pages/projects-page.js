@@ -10,10 +10,11 @@ import { pathFor, t } from "../i18n/index.js";
 
 const projectsPerPage = 6;
 
-async function loadProjectsPage(requestedPage) {
+async function loadProjectsPage(requestedPage, locale) {
   let response = await getProjetsPage({
     page: requestedPage,
     pageSize: projectsPerPage,
+    locale,
   });
   let pagination = response.meta?.pagination ?? {};
   const totalPages = Math.max(1, pagination.pageCount ?? 1);
@@ -25,6 +26,7 @@ async function loadProjectsPage(requestedPage) {
     response = await getProjetsPage({
       page: currentPage,
       pageSize: projectsPerPage,
+      locale,
     });
     pagination = response.meta?.pagination ?? {};
   }
@@ -49,7 +51,7 @@ export default async function ProjectsPage({ locale = "en" } = {}) {
   let projectsLoadFailed = false;
 
   try {
-    projectsPage = await loadProjectsPage(page);
+    projectsPage = await loadProjectsPage(page, locale);
   } catch (error) {
     console.error("Impossible de charger les projets Strapi.", error);
     projectsLoadFailed = true;

@@ -21,7 +21,7 @@ export function getFooterContactPropsFromProfile(profile, locale = "en") {
 // The footer remains usable without Strapi; only social links are omitted.
 export default async function getFooterContactProps(locale = "en") {
   try {
-    const profile = await getProfil();
+    const profile = await getProfil(locale);
     return getFooterContactPropsFromProfile(profile, locale);
   } catch (error) {
     console.error("Impossible de charger les liens sociaux Strapi.", error);
