@@ -1,4 +1,8 @@
-const API_URL = "http://localhost:1337/api";
+// Strapi de production (cf. backend/production/README.md). NE PAS committer
+// une valeur localhost : ce fichier est copié tel quel dans le build Vercel.
+// Pour du dev local, changer temporairement sans commiter (git update-index
+// --skip-worktree, ou stash avant push).
+const API_URL = "https://api-portfolio-fedi.aijing.li/api";
 
 const config = {
   API_URL,
