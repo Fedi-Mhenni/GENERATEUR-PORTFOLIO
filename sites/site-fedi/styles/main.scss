@@ -9,6 +9,7 @@
 @use "components/about";
 @use "components/contact";
 @use "components/projets";
+@use "components/projet-detail";
 
 body {
   background-color: var(--color-bg-surface);
