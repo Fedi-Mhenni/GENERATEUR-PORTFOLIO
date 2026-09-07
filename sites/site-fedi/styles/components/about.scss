@@ -2,9 +2,8 @@
 // "My Journey") — fidèle à la maquette Figma "A propos — Desktop".
 .about {
   padding-top: var(--spacing-button-padding-x);
-  // Marge généreuse avant le footer : évite que la dernière section
-  // (Journey) soit collée dessus.
-  padding-bottom: calc(var(--spacing-nav-gap) * 2.5);
+  // L'espace avant le footer est géré automatiquement pour toutes les pages
+  // (cf. main.scss, ".page > *:nth-last-child(2)") — pas besoin ici.
   flex: 1 0 auto; // pousse le footer en bas même si le contenu est court
   display: flex;
   flex-direction: column;
@@ -36,19 +35,6 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--spacing-button-padding-y);
-}
-
-.about__pdf-feedback {
-  font-size: var(--font-caption);
-  color: var(--color-text-primary);
-
-  &:empty {
-    display: none;
-  }
-}
-
-.about__pdf-feedback--error {
-  color: var(--color-state-error);
 }
 
 .about__section {

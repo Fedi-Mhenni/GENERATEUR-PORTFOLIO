@@ -4,23 +4,7 @@ import resolveImageUrl from "../vanilla-engine/src/utils/resolve-url.js";
 import config from "../config.js";
 import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
-
-// Lien externe (média Strapi) : navigation réelle du navigateur, contrairement
-// à BrowserLink qui intercepte le clic pour le routeur SPA — ne convient pas
-// ici (pushState refuse une URL cross-origin). Même pattern qu'about-page.js.
-// classNames : tableau, convention du framework (cf. generate-structure.js).
-function externalLink(url, label, classNames) {
-  return {
-    type: "a",
-    attributes: [
-      ["href", url],
-      ["target", "_blank"],
-      ["rel", "noopener noreferrer"],
-      ["class", classNames],
-    ],
-    children: [label],
-  };
-}
+import ExportPdfButton from "../components/export-pdf-button.js";
 
 // BrowserLink() ne prend pas de classe — on complète son attribut après coup
 // plutôt que de toucher au framework. Même pattern que navbar.js/footer.js.
@@ -54,10 +38,11 @@ export default async function HomePage() {
     attributes: [["class", ["page"]]],
     children: [
       Navbar(),
+      ExportPdfButton(),
       profil
         ? {
             type: "section",
-            attributes: [["class", ["hero"]]],
+            attributes: [["class", ["hero", "page__content"]]],
             children: [
               {
                 type: "div",
@@ -116,18 +101,9 @@ export default async function HomePage() {
                   {
                     type: "div",
                     attributes: [["class", ["hero__actions"]]],
-                    children: [
-                      ...(profil.cv
-                        ? [
-                            externalLink(
-                              resolveImageUrl(profil.cv.url, config.STRAPI_ORIGIN),
-                              "MY CV",
-                              ["btn", "btn--secondary"],
-                            ),
-                          ]
-                        : []),
-                      ctaLink("/contact", "Get in touch", ["btn", "btn--primary"]),
-                    ],
+                    // "MY CV" retiré : la vraie page CV (téléchargement) vit
+                    // maintenant sur About, pas besoin de la dupliquer ici.
+                    children: [ctaLink("/contact", "Get in touch", ["btn", "btn--primary"])],
                   },
                 ],
               },

@@ -1,8 +1,8 @@
 import { getProfil, getCompetences, getJourneys } from "../services/strapi-api.js";
 import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
+import ExportPdfButton from "../components/export-pdf-button.js";
 import resolveImageUrl from "../vanilla-engine/src/utils/resolve-url.js";
-import generatePdf from "../vanilla-engine/src/pdf/index.js";
 import config from "../config.js";
 
 // Lien externe (média Strapi) : même raison qu'ailleurs (home-page.js,
@@ -18,23 +18,6 @@ function externalLink(url, label, classNames) {
     ],
     children: [label],
   };
-}
-
-// Exporte le contenu de la page (hors Navbar/Footer, non pertinents figés
-// dans un PDF) : .about porte tout ce qui représente réellement "mon
-// portfolio" — bio, compétences, parcours.
-async function handleExportPdf() {
-  const feedback = document.querySelector("[data-pdf-feedback]");
-  feedback.textContent = "";
-  feedback.className = "about__pdf-feedback";
-
-  const cible = document.querySelector(".about");
-  const { success, errors } = await generatePdf(cible, { filename: "portfolio-fedi-mhenni.pdf" });
-
-  if (!success) {
-    feedback.textContent = errors?.[0] ?? "Échec de l'export PDF, réessaie plus tard.";
-    feedback.className = "about__pdf-feedback about__pdf-feedback--error";
-  }
 }
 
 // Groupe les compétences par categorie (accordéon "What I do" de la maquette
@@ -82,9 +65,10 @@ export default async function AboutPage() {
     attributes: [["class", ["page"]]],
     children: [
       Navbar(),
+      ExportPdfButton(),
       {
         type: "main",
-        attributes: [["class", ["container", "about"]]],
+        attributes: [["class", ["container", "about", "page__content"]]],
         children: [
           {
             type: "section",
@@ -96,32 +80,21 @@ export default async function AboutPage() {
                 attributes: [["class", ["about__bio"]]],
                 children: [profil?.biographie ?? "Profil non renseigné."],
               },
-              {
-                type: "div",
-                attributes: [["class", ["about__actions"]]],
-                children: [
-                  ...(profil?.cv
-                    ? [
+              ...(profil?.cv
+                ? [
+                    {
+                      type: "div",
+                      attributes: [["class", ["about__actions"]]],
+                      children: [
                         externalLink(
                           resolveImageUrl(profil.cv.url, config.STRAPI_ORIGIN),
                           "Télécharger le CV",
                           ["btn", "btn--secondary"],
                         ),
-                      ]
-                    : []),
-                  {
-                    type: "button",
-                    attributes: [["type", "button"], ["class", ["btn", "btn--secondary"]]],
-                    events: [["click", handleExportPdf]],
-                    children: ["Exporter mon portfolio en PDF"],
-                  },
-                ],
-              },
-              {
-                type: "p",
-                attributes: [["class", ["about__pdf-feedback"]], ["data-pdf-feedback", "true"]],
-                children: [""],
-              },
+                      ],
+                    },
+                  ]
+                : []),
             ],
           },
           {
