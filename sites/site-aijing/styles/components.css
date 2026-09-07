@@ -420,6 +420,9 @@ textarea.form-field__control {
 .parcours--photo-right .parcours__content {
   grid-column: 1;
   grid-row: 1;
+  width: min(100%, 40.625rem);
+  justify-self: start;
+  justify-items: end;
 }
 
 .parcours--photo-right .parcours__title {
@@ -428,7 +431,8 @@ textarea.form-field__control {
 }
 
 .parcours--photo-right .parcours__description {
-  justify-self: start;
+  width: min(100%, 40.625rem);
+  justify-self: end;
 }
 
 .parcours__media {
@@ -633,6 +637,17 @@ textarea.form-field__control {
   .parcours--photo-right .parcours__content {
     grid-column: auto;
     grid-row: auto;
+  }
+
+  .parcours--photo-right .parcours__content {
+    justify-items: start;
+  }
+
+  .parcours--photo-right .parcours__title,
+  .parcours--photo-right .parcours__company,
+  .parcours--photo-right .parcours__description {
+    justify-self: start;
+    text-align: left;
   }
 
   .parcours__media {
