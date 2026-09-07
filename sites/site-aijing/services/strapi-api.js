@@ -1,10 +1,6 @@
 import config from "../config.js";
 
 function normalizedLocale(locale) {
-  // The public route uses the concise `/fr`, while this Strapi instance is
-  // configured with the regional French locale (`fr-FR`). This function is
-  // intentionally idempotent because the locale also passes through request()
-  // after it has already been normalized by localizedResponse().
   return locale === "fr" || locale === "fr-FR" ? "fr-FR" : "en";
 }
 
@@ -86,8 +82,6 @@ async function localizedResponse(endpoint, locale = "en") {
   try {
     response = await request(endpoint, requestedLocale);
   } catch (error) {
-    // A failed request is a real application error. A 404 is the one expected
-    // Strapi response when a single-type has no localisation yet.
     if (!shouldFallbackToEnglish || error.status !== 404) {
       throw error;
     }
