@@ -1,0 +1,128 @@
+// Page Projets, fidèle à la maquette Figma (node 223:654) : titre centré,
+// puis une rangée par projet (mockup laptop | carte titre+soustitre+CTA),
+// empilées verticalement.
+.projets {
+  padding-top: calc(var(--spacing-nav-gap) * 2);
+  // L'espace avant le footer est géré automatiquement pour toutes les pages
+  // (cf. main.scss, ".page > *:nth-last-child(2)") — pas besoin ici.
+  flex: 1 0 auto; // pousse le footer en bas même si peu de projets
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 56px; // gap exact de la maquette entre les rangées
+}
+
+.projets__title {
+  font-size: var(--font-h1);
+  color: var(--color-text-primary);
+}
+
+.projets__liste {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.projets__empty {
+  font-size: var(--font-body);
+  color: var(--color-text-accent-hover);
+}
+
+.projet-ligne {
+  display: flex;
+  align-items: center;
+  gap: 60px; // gap exact de la maquette entre laptop et carte
+}
+
+// Cadre laptop = le vrai PNG exporté de Figma (jamais redessiné en CSS).
+// Le écran est un trou transparent dans ce PNG : la capture du projet est
+// positionnée en dessous, aux coordonnées exactes mesurées sur l'image
+// (678x490 natif) — left 12.83% / top 4.29% / width 74.34% / height 64.69%.
+.carte-projet__laptop {
+  position: relative;
+  flex: 1 1 0;
+  max-width: 650px;
+  aspect-ratio: 678 / 490;
+}
+
+.carte-projet__laptop-screenshot {
+  position: absolute;
+  left: 12.83%;
+  top: 4.29%;
+  width: 74.34%;
+  height: 64.69%;
+  object-fit: cover;
+}
+
+.carte-projet__laptop-placeholder {
+  position: absolute;
+  left: 12.83%;
+  top: 4.29%;
+  width: 74.34%;
+  height: 64.69%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-accent);
+  color: var(--color-text-primary);
+  opacity: 0.5;
+  font-size: var(--font-label);
+}
+
+.carte-projet__laptop-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.projet-carte {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: calc(var(--spacing-nav-gap) * 1.25); // 40px
+  background-color: var(--color-bg-accent);
+  border-radius: 24px;
+}
+
+.projet-carte__titre {
+  font-size: var(--font-h2);
+  color: var(--color-text-primary);
+}
+
+.projet-carte__soustitre {
+  font-size: 17px; // valeur exacte de la maquette, pas un token existant
+  color: var(--color-text-primary);
+  opacity: 0.8;
+  overflow-wrap: break-word;
+}
+
+// Bouton CTA plus grand que le .btn standard (cf. hero.scss) : entièrement
+// dérivé des tokens existants (padding-y/nav-gap/font-h3 correspondent
+// exactement aux 16px/32px/22px de la maquette), pas de valeur en dur.
+.btn--large {
+  padding: var(--spacing-button-padding-y) var(--spacing-nav-gap);
+  font-size: var(--font-h3);
+}
+
+// Une seule media query : sous ~768px, chaque rangée passe en colonne
+// (laptop au-dessus de sa carte), comme Hero/About avant elle.
+@media (max-width: 768px) {
+  .projet-ligne {
+    flex-direction: column;
+  }
+
+  .carte-projet__laptop {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .projet-carte {
+    width: 100%;
+  }
+}
