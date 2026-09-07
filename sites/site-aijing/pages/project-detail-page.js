@@ -1,5 +1,6 @@
 import BrowserLink from "../vanilla-engine/src/router/link.js";
 import AmbientBlur from "../components/ambient-blur.js";
+import Gallery from "../components/gallery.js";
 import NarrativeRow from "../components/narrative-row.js";
 import ProjectDetailPagination from "../components/project-detail-pagination.js";
 import SiteLayout from "../components/site-layout.js";
@@ -239,6 +240,9 @@ function projectDetailContent(state) {
           attributes: [["class", ["project-detail-page__narratives"]]],
           children: state.detail.narratives.map((section) => NarrativeRow(section)),
         }]
+      : []),
+    ...(state.detail.galleryImages.length
+      ? [Gallery({ images: state.detail.galleryImages })]
       : []),
     ProjectDetailPagination({
       previousHref: state.neighbours.previousHref,

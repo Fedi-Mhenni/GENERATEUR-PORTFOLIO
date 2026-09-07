@@ -9,7 +9,6 @@ import {
 } from "../services/strapi-api.js";
 import adaptAboutData from "./adapt-about-data.js";
 import { getFooterContactPropsFromProfile } from "./get-footer-contact-props.js";
-import { footerContactCopy } from "./static-site-content.js";
 
 const aboutState = {
   status: "loading",
@@ -238,9 +237,7 @@ function aboutContent() {
 
 export default function AboutMePage() {
   loadAboutData();
-  const footerProps = aboutState.profileRecord
-    ? getFooterContactPropsFromProfile(aboutState.profileRecord)
-    : footerContactCopy;
+  const footerProps = getFooterContactPropsFromProfile(aboutState.profileRecord);
 
   return SiteLayout({
     currentPath: "/about-me",

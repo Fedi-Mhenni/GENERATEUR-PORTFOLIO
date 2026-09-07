@@ -36,7 +36,7 @@ export function getLatestProjets() {
 
 export async function getProjetBySlug(slug) {
   const params = new URLSearchParams({
-    populate: "image",
+    populate: "image,optional_images",
     "filters[slug][$eq]": slug,
     "pagination[pageSize]": "1",
   });

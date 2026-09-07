@@ -49,6 +49,53 @@ function contactIllustration(props) {
   };
 }
 
+function formStatus(form, message, type = "") {
+  const status = form.querySelector(".footer-contact__form-status");
+
+  if (!status) {
+    return;
+  }
+
+  status.textContent = message;
+  status.className = [
+    "footer-contact__form-status",
+    ...(type ? [`footer-contact__form-status--${type}`] : []),
+  ].join(" ");
+}
+
+async function submitContactForm(event, onSubmit) {
+  event.preventDefault();
+
+  if (!onSubmit) {
+    return;
+  }
+
+  const form = event.currentTarget;
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  form.setAttribute("aria-busy", "true");
+  submitButton?.setAttribute("disabled", "");
+  formStatus(form, "Sending message…");
+
+  try {
+    const result = await onSubmit(new FormData(form));
+
+    if (result?.success) {
+      form.reset();
+      formStatus(form, "Message sent. Thank you!", "success");
+      return;
+    }
+
+    formStatus(form, "Message could not be sent. Please try again.", "error");
+  } catch (error) {
+    console.error("Impossible d'envoyer le message.", error);
+    formStatus(form, "Message could not be sent. Please try again.", "error");
+  } finally {
+    form.removeAttribute("aria-busy");
+    submitButton?.removeAttribute("disabled");
+  }
+}
+
 export default function FooterContact(props) {
   const { valid, errors, props: finalProps } = validateProps(props, schema);
 
@@ -121,10 +168,7 @@ export default function FooterContact(props) {
             events: [
               [
                 "submit",
-                (event) => {
-                  event.preventDefault();
-                  finalProps.onSubmit?.(event);
-                },
+                (event) => submitContactForm(event, finalProps.onSubmit),
               ],
             ],
             children: [
@@ -164,6 +208,15 @@ export default function FooterContact(props) {
                 label: finalProps.submitLabel ?? "Envoyer",
                 type: "submit",
               }),
+              {
+                type: "p",
+                attributes: [
+                  ["class", ["footer-contact__form-status"]],
+                  ["role", "status"],
+                  ["aria-live", "polite"],
+                ],
+                children: [],
+              },
             ],
           },
         ],

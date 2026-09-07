@@ -9,6 +9,24 @@ function preferredImage(image) {
   return image?.formats?.large ?? image ?? null;
 }
 
+function galleryImages(images, title) {
+  return (Array.isArray(images) ? images : []).flatMap((source, index) => {
+    const image = preferredImage(source);
+    const url = resolveImageUrl(image?.url, config.API_ORIGIN);
+
+    if (!url) {
+      return [];
+    }
+
+    return [{
+      url,
+      alt: nonEmptyString(source?.alternativeText) || `${title} — view ${index + 1}`,
+      width: image?.width || 0,
+      height: image?.height || 0,
+    }];
+  });
+}
+
 function formatProjectDate(date) {
   const value = nonEmptyString(date);
 
@@ -64,6 +82,7 @@ export default function adaptProjectToDetail(project) {
     imageAlt: nonEmptyString(normalizedProject.image?.alternativeText) || title,
     imageWidth: image?.width,
     imageHeight: image?.height,
+    galleryImages: galleryImages(normalizedProject.optional_images, title),
     narratives,
   };
 }
