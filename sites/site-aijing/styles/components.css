@@ -399,6 +399,7 @@ textarea.form-field__control {
 }
 
 .parcours--photo-right {
+  grid-template-columns: minmax(5.4375rem, max-content) minmax(0, 1fr);
   grid-template-areas: "period story";
 }
 
@@ -406,7 +407,7 @@ textarea.form-field__control {
   grid-area: story;
   display: grid;
   grid-template-columns: 15.875rem minmax(0, 1fr);
-  gap: var(--space-xl);
+  gap: var(--space-2xl);
 }
 
 .parcours--photo-right .parcours__story {
@@ -420,19 +421,24 @@ textarea.form-field__control {
 .parcours--photo-right .parcours__content {
   grid-column: 1;
   grid-row: 1;
-  width: min(100%, 40.625rem);
+  width: min(100%, 50rem);
   justify-self: start;
-  justify-items: end;
+  justify-items: start;
 }
 
 .parcours--photo-right .parcours__title {
-  justify-self: end;
-  text-align: right;
+  justify-self: start;
+  text-align: left;
+}
+
+.parcours--photo-right .parcours__company {
+  justify-self: start;
+  text-align: left;
 }
 
 .parcours--photo-right .parcours__description {
-  width: min(100%, 40.625rem);
-  justify-self: end;
+  width: 100%;
+  justify-self: start;
 }
 
 .parcours__media {
@@ -488,7 +494,8 @@ textarea.form-field__control {
 }
 
 .parcours__description {
-  max-width: 40.625rem;
+  max-width: 50rem;
+  overflow-wrap: anywhere;
   white-space: pre-line;
 }
 
