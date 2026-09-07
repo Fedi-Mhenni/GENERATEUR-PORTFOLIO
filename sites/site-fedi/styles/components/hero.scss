@@ -1,0 +1,156 @@
+// Hero : 2 colonnes desktop (photo + texte) -> 1 colonne empilée sous ~768px.
+.hero {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-nav-gap);
+  padding: var(--spacing-button-padding-x);
+}
+
+.hero__media {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
+}
+
+// Photo en cercle, taille fluide (pourcentage du conteneur, pas de px fixe)
+// pour rester correcte à toutes les largeurs sans breakpoints supplémentaires.
+.hero__photo {
+  width: 100%;
+  // Agrandi ×1.25 (320px -> 400px), même facteur que la typographie du Hero
+  // ci-dessous, pour rester proportionné (cf. commentaire sur .hero__title).
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.hero__content {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-button-padding-y);
+  min-width: 0; // empêche le texte long de forcer un débordement en flex
+}
+
+// Badge de disponibilité : discret, petite pastille de couleur devant le texte.
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: var(--font-caption);
+  color: var(--color-text-primary);
+  padding: 0.25em 0.75em;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-bg-accent);
+
+  &::before {
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background-color: var(--color-state-success);
+  }
+}
+
+// Tailles propres à ce Hero (×1.25, même facteur que .hero__photo ci-dessus),
+// PAS les classes globales .text-h1/.text-body de typography.scss : celles-ci
+// sont l'échelle partagée du Design System pour les futures pages (about,
+// projets, contact) — les agrandir ici les ferait grossir partout ailleurs.
+// Un Hero de home page volontairement plus grand que le corps de texte
+// standard est un pattern courant ; le reste du site garde l'échelle normale.
+.hero__greeting {
+  font-size: calc(var(--font-label) * 1.25);
+  color: var(--color-text-accent-hover);
+}
+
+.hero__title {
+  font-size: calc(var(--font-h1) * 1.25);
+  color: var(--color-text-primary);
+  overflow-wrap: break-word;
+}
+
+.hero__role {
+  font-size: calc(var(--font-label) * 1.25);
+  color: var(--color-text-accent-hover);
+}
+
+.hero__school {
+  font-size: calc(var(--font-caption) * 1.25);
+  color: var(--color-text-primary);
+}
+
+// Les 3 paragraphes de l'introduction restent groupés visuellement (gap
+// resserré), distincts du gap plus large entre les sections du hero.
+.hero__intro-group {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-button-padding-y) / 2);
+}
+
+.hero__intro {
+  font-size: calc(var(--font-body) * 1.25);
+  color: var(--color-text-primary);
+  overflow-wrap: break-word;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-button-padding-y);
+}
+
+// Boutons du Design System : radius pill, couleurs déjà en tokens.
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  padding: var(--spacing-button-padding-y) var(--spacing-button-padding-x);
+  font-size: var(--font-body);
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background-color: var(--color-bg-button-primary);
+  color: var(--color-text-on-button);
+
+  &:hover {
+    background-color: var(--color-bg-button-hover);
+  }
+}
+
+.btn--secondary {
+  background-color: transparent;
+  color: var(--color-text-button-secondary);
+  border: 1px solid var(--color-border-button-secondary);
+
+  &:hover {
+    background-color: var(--color-bg-button-secondary-hover);
+  }
+}
+
+// Focus clavier explicite (token dédié --color-border-focus-ring, jusqu'ici
+// défini mais jamais consommé) plutôt que de dépendre du seul style navigateur
+// par défaut, inconsistant selon les navigateurs sur des pills arrondies.
+.btn:focus-visible {
+  outline: 2px solid var(--color-border-focus-ring);
+  outline-offset: 2px;
+}
+
+// Une seule media query : sous ~768px, la colonne (photo + texte) s'empile,
+// le texte reste centré et l'image garde une taille fluide raisonnable.
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero__content {
+    align-items: center;
+  }
+
+  .hero__actions {
+    justify-content: center;
+  }
+}

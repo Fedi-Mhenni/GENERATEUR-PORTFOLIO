@@ -1,0 +1,83 @@
+// Point d'entrée : compilé seul en CSS (voir README pour la commande).
+// Ordre volontaire : variables (tokens) -> reset -> typographie -> composants.
+@use "variables";
+@use "reset";
+@use "typography";
+@use "components/navbar";
+@use "components/hero";
+@use "components/footer";
+@use "components/about";
+@use "components/contact";
+@use "components/projets";
+@use "components/projet-detail";
+
+body {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+}
+
+// Sticky footer : chaque page (routée dans #root) est ce wrapper direct. Pas
+// besoin de forcer html/body en height:100% — min-height:100vh se cale sur le
+// viewport indépendamment de la hauteur des ancêtres. Le footer (margin-top:
+// auto, cf. footer.scss) absorbe l'espace restant et colle en bas ; si le
+// contenu dépasse 100vh, la page grandit naturellement au-delà.
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// Espace garanti entre le contenu et le footer, sur TOUTE page qui suit le
+// pattern .page > [Navbar, <contenu>, Footer] (Home, About, Projets, et les
+// suivantes) — automatique, pas à répéter dans le SCSS de chaque page.
+// Nécessaire en plus de margin-top:auto sur .footer (cf. footer.scss) :
+// "auto" absorbe l'espace UNIQUEMENT s'il en reste dans le viewport : sur un
+// contenu plus long que l'écran (ex: descriptions de Projets), il vaut 0 et
+// le footer se retrouve collé juste sous le dernier élément sans cette règle.
+.page > *:nth-last-child(2) {
+  margin-bottom: calc(var(--spacing-nav-gap) * 2);
+}
+
+// Conteneur de contenu partagé par toutes les pages (hors navbar/footer, qui
+// gèrent leur propre pleine largeur) : consomme --grid-max-width, jusqu'ici
+// défini dans variables.scss mais jamais utilisé.
+.container {
+  width: 100%;
+  max-width: var(--grid-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-button-padding-x);
+}
+
+// Bouton "Export this page on PDF", partagé par toutes les pages (comme
+// Navbar/Footer) : à droite, juste sous la navbar. Même largeur/alignement
+// que .container pour tomber sous le CTA de la navbar.
+.page-pdf-export {
+  width: 100%;
+  max-width: var(--grid-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-button-padding-y) var(--spacing-button-padding-x) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.page-pdf-export__button {
+  font-size: var(--font-caption);
+  padding: calc(var(--spacing-button-padding-y) / 2) var(--spacing-button-padding-x);
+}
+
+.page-pdf-export__feedback {
+  font-size: var(--font-caption);
+  color: var(--color-text-primary);
+  margin-top: 0.35em;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.page-pdf-export__feedback--error {
+  color: var(--color-state-error);
+}

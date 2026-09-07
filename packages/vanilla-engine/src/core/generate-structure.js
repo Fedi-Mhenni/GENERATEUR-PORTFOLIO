@@ -10,7 +10,13 @@ export default function generateStructure(structure) {
         const customStyle = Object.fromEntries(attribute[1]);
         element.style = Object.assign(element.style, customStyle);
       } else if (attribute[0].startsWith("data-")) {
-        const dataKey = attribute[0].replace("data-", "");
+        // dataset exige une clé camelCase ("pdfFeedback"), pas le kebab-case
+        // de l'attribut HTML ("pdf-feedback") — sans conversion, affecter
+        // dataset["pdf-feedback"] lève une exception (nom de propriété
+        // invalide), ça plantait sur tout data-* à tiret multiple.
+        const dataKey = attribute[0]
+          .replace("data-", "")
+          .replace(/-([a-z0-9])/g, (_, char) => char.toUpperCase());
         element.dataset[dataKey] = attribute[1];
       } else {
         element.setAttribute(attribute[0], attribute[1]);

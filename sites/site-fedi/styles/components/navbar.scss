@@ -1,0 +1,84 @@
+// Navbar : 2 groupes seulement (conforme Figma) — logo tout à gauche, puis
+// liens + CTA regroupés ensemble à droite (pas 3 zones à largeur égale).
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-button-padding-y) var(--spacing-button-padding-x);
+}
+
+.navbar__logo {
+  font-family: var(--font-family-accent);
+  font-size: var(--font-h3);
+  color: var(--color-text-primary);
+}
+
+// Sous-groupe de droite : liens + CTA, avec un espace cohérent entre les deux
+// (même gap que celui utilisé entre les liens eux-mêmes).
+.navbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-nav-gap);
+  flex-wrap: wrap;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-nav-gap);
+  flex-wrap: wrap;
+}
+
+.navbar__link {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-size: var(--font-body);
+
+  &:hover {
+    color: var(--color-text-accent-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+// CTA mis en avant : couleur bouton primaire, radius pill (cf. variables.scss).
+.navbar__cta {
+  background-color: var(--color-bg-button-primary);
+  color: var(--color-text-on-button);
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  padding: calc(var(--spacing-button-padding-y) / 2) var(--spacing-button-padding-x);
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--color-bg-button-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+// Une seule media query, pas de vrai système de breakpoints : sous ~768px on
+// empile logo / liens / CTA en colonne pour ne jamais déborder ni écraser le
+// texte, sans viser un rendu pixel-perfect mobile (pas de maquette Figma).
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--spacing-nav-gap) / 2);
+  }
+
+  .navbar__right {
+    flex-direction: column;
+    gap: calc(var(--spacing-nav-gap) / 2);
+  }
+
+  .navbar__links {
+    justify-content: center;
+  }
+}

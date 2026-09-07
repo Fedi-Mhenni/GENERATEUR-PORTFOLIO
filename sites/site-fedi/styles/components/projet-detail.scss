@@ -1,0 +1,115 @@
+// Détail projet, fidèle aux 3 maquettes Figma (pd1/pd2/pd3 — même gabarit,
+// contenu réel différent par projet) : lien retour, titre, tags techno,
+// image, contexte (description), bouton GitHub.
+.projet-detail {
+  padding-top: calc(var(--spacing-nav-gap) * 2);
+  flex: 1 0 auto; // pousse le footer en bas même si le contenu est court
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-nav-gap);
+}
+
+.projet-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-h3);
+  color: var(--color-text-primary);
+  align-self: flex-start;
+
+  &:hover {
+    color: var(--color-text-accent-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.projet-detail__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-nav-gap);
+}
+
+.projet-detail__titre {
+  font-size: var(--font-h2);
+  color: var(--color-text-primary);
+}
+
+.projet-detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px; // gap exact de la maquette
+}
+
+.projet-detail__tag {
+  background-color: var(--color-bg-button-primary);
+  color: var(--color-text-on-button);
+  font-size: var(--font-caption);
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.projet-detail__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1200 / 775; // proportion exacte de la maquette (desktop)
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: var(--color-bg-accent);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.projet-detail__media-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+  opacity: 0.5;
+  font-size: var(--font-label);
+  text-align: center;
+  padding: var(--spacing-nav-gap);
+}
+
+.projet-detail__context {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.projet-detail__context-title {
+  font-size: var(--font-h3);
+  color: var(--color-text-muted);
+}
+
+.projet-detail__paragraphe {
+  font-size: var(--font-body);
+  color: var(--color-text-primary);
+  overflow-wrap: break-word;
+}
+
+.projet-detail__empty {
+  font-size: var(--font-body);
+  color: var(--color-text-accent-hover);
+}
+
+// Une seule media query : réduit la hauteur d'image (ratio plus vertical)
+// pour ne pas forcer un scroll excessif sur mobile.
+@media (max-width: 768px) {
+  .projet-detail__media {
+    aspect-ratio: 4 / 3;
+  }
+}

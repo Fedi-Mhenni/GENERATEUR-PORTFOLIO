@@ -3,8 +3,20 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mon Portfolio</title>
-    <script type="module" src="./index.js"></script>
+    <title>Fedi's portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=STIX+Two+Math:wght@400&family=Vujahday+Script&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Chemins absolus (pas "./...") : un chemin relatif se résout par
+         rapport à l'URL courante, pas au fichier — casse dès qu'on charge ou
+         rafraîchit directement une route à 2 segments ou plus (ex:
+         /projets/second-brain), le navigateur cherchant alors
+         /projets/index.js au lieu de /index.js. -->
+    <link rel="stylesheet" href="/styles/main.css" />
+    <script type="module" src="/index.js"></script>
   </head>
   <body>
     <div id="root"></div>
