@@ -39,7 +39,7 @@ function projectNeighbours(projects, slug, locale) {
 }
 
 async function loadProjectDetail(slug, locale) {
-  const project = await getProjetBySlug(slug);
+  const project = await getProjetBySlug(slug, locale);
 
   if (!project) {
     return { status: "not-found" };
@@ -48,7 +48,7 @@ async function loadProjectDetail(slug, locale) {
   const detail = adaptProjectToDetail(project, locale);
 
   try {
-    const projects = await getProjetsByDate();
+    const projects = await getProjetsByDate(locale);
     return {
       status: "success",
       detail,

@@ -31,10 +31,22 @@ export function matchRoute(routes, pathname) {
 }
 
 export default function BrowserRouter(rootElement, routes) {
+  let renderVersion = 0;
+
   async function refreshPage() {
+    const currentRenderVersion = ++renderVersion;
     const pathname = window.location.pathname;
     const { generator, params } = matchRoute(routes, pathname);
     const structure = await generator(params);
+
+    // Page generators may fetch data. If the user navigates while an earlier
+    // generator is still pending, its result must never replace the newer page.
+    if (
+      currentRenderVersion !== renderVersion ||
+      pathname !== window.location.pathname
+    ) {
+      return;
+    }
 
     if (rootElement.childNodes[0]) {
       rootElement.replaceChild(
