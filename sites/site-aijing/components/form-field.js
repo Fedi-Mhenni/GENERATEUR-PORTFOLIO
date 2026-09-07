@@ -4,6 +4,7 @@ const schema = {
   id: { type: "string", required: true },
   name: { type: "string", required: true },
   label: { type: "string", required: true },
+  labelChildren: { type: "array", required: false },
   type: { type: "string", required: false, default: "text" },
   value: { type: "string", required: false, default: "" },
   placeholder: { type: "string", required: false, default: "" },
@@ -82,7 +83,9 @@ export default function FormField(props) {
   const label = {
     type: "label",
     attributes: [["class", ["form-field__label"]], ["for", finalProps.id ?? ""]],
-    children: [finalProps.label ?? "Champ"],
+    children: finalProps.labelChildren?.length
+      ? finalProps.labelChildren
+      : [finalProps.label ?? "Champ"],
   };
 
   const error = finalProps.error

@@ -1,5 +1,6 @@
 import config from "../config.js";
 import resolveImageUrl from "../vanilla-engine/src/utils/resolve-url.js";
+import { getTranslations } from "../i18n/index.js";
 
 function nonEmptyString(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -9,24 +10,24 @@ function normalize(record) {
   return record?.attributes ?? record ?? {};
 }
 
-function formatMonthYear(value) {
+function formatMonthYear(value, locale) {
   const date = new Date(value);
 
   if (!value || Number.isNaN(date.getTime())) {
     return "";
   }
 
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat(locale, {
     month: "short",
     year: "numeric",
     timeZone: "UTC",
   }).format(date);
 }
 
-function period(start, end) {
+function period(start, end, locale) {
   return {
-    periodStart: formatMonthYear(start),
-    periodEnd: formatMonthYear(end),
+    periodStart: formatMonthYear(start, locale),
+    periodEnd: formatMonthYear(end, locale),
   };
 }
 
@@ -50,7 +51,7 @@ function parcoursImage(media, fallbackAlt) {
   };
 }
 
-function profileDetails(profile) {
+function profileDetails(profile, locale) {
   if (!profile) {
     return null;
   }
@@ -62,17 +63,19 @@ function profileDetails(profile) {
   const photo = value.photo ?? null;
 
   return {
-    title: firstName ? `About ${firstName}` : "About Me",
+    title: firstName
+      ? (locale === "fr" ? `À propos de ${firstName}` : `About ${firstName}`)
+      : getTranslations(locale).about.title,
     biography: nonEmptyString(value.biographie) || nonEmptyString(value.introduction),
     photoUrl: resolveImageUrl(photo?.url, config.API_ORIGIN),
-    photoAlt: nonEmptyString(photo?.alternativeText) || `Portrait of ${fullName || "Aijing Li"}`,
+    photoAlt: nonEmptyString(photo?.alternativeText) || `${locale === "fr" ? "Portrait de" : "Portrait of"} ${fullName || "Aijing Li"}`,
     photoWidth: photo?.width || 0,
     photoHeight: photo?.height || 0,
     cvUrl: resolveImageUrl(value.cv?.url, config.API_ORIGIN),
   };
 }
 
-function skillGroups(competencies) {
+function skillGroups(competencies, locale) {
   const groups = new Map();
 
   (Array.isArray(competencies) ? competencies : []).forEach((competency) => {
@@ -83,7 +86,7 @@ function skillGroups(competencies) {
       return;
     }
 
-    const category = nonEmptyString(value.categorie) || "Skills";
+    const category = nonEmptyString(value.categorie) || getTranslations(locale).about.skillsTitle;
     const entries = groups.get(category) ?? [];
     entries.push(name);
     groups.set(category, entries);
@@ -92,7 +95,7 @@ function skillGroups(competencies) {
   return [...groups].map(([title, items]) => ({ title, items: items.join(" · ") }));
 }
 
-function journeyEntries(journeys) {
+function journeyEntries(journeys, locale) {
   return (Array.isArray(journeys) ? journeys : []).flatMap((journey, index) => {
     const value = normalize(journey);
     const title = nonEmptyString(value.cursus) || nonEmptyString(value.ecole);
@@ -107,8 +110,8 @@ function journeyEntries(journeys) {
     const school = nonEmptyString(value.cursus) ? nonEmptyString(value.ecole) : "";
 
     return [{
-      ...period(value.date_debut, value.date_fin),
-      ...parcoursImage(value.image, `Image for ${title}`),
+      ...period(value.date_debut, value.date_fin, locale),
+      ...parcoursImage(value.image, `${locale === "fr" ? "Image de" : "Image for"} ${title}`),
       title,
       description: [school, location].filter(Boolean).join(" · "),
       mediaIndex: String(index + 1).padStart(2, "0"),
@@ -118,7 +121,7 @@ function journeyEntries(journeys) {
   });
 }
 
-function experienceEntries(experiences) {
+function experienceEntries(experiences, locale) {
   return (Array.isArray(experiences) ? experiences : []).flatMap((experience, index) => {
     const value = normalize(experience);
     const title = nonEmptyString(value.intitule);
@@ -131,8 +134,8 @@ function experienceEntries(experiences) {
     const description = nonEmptyString(value.description);
 
     return [{
-      ...period(value.dateDebut, value.dateFin),
-      ...parcoursImage(value.image, `Image for ${title}`),
+      ...period(value.dateDebut, value.dateFin, locale),
+      ...parcoursImage(value.image, `${locale === "fr" ? "Image de" : "Image for"} ${title}`),
       title,
       company,
       description,
@@ -148,11 +151,11 @@ export default function adaptAboutData({
   competencies,
   journeys,
   experiences,
-} = {}) {
+} = {}, locale = "en") {
   return {
-    profile: profileDetails(profile),
-    skills: skillGroups(competencies),
-    journeys: journeyEntries(journeys),
-    experiences: experienceEntries(experiences),
+    profile: profileDetails(profile, locale),
+    skills: skillGroups(competencies, locale),
+    journeys: journeyEntries(journeys, locale),
+    experiences: experienceEntries(experiences, locale),
   };
 }

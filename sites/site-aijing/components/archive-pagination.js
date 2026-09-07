@@ -7,6 +7,8 @@ const schema = {
   onPageChange: { type: "function", required: true },
   previousLabel: { type: "string", required: false, default: "Previous" },
   nextLabel: { type: "string", required: false, default: "Next" },
+  ariaLabel: { type: "string", required: false, default: "Project pagination" },
+  invalidLabel: { type: "string", required: false, default: "Pagination is unavailable." },
 };
 
 function paginationIsValid(props) {
@@ -36,7 +38,7 @@ export default function ArchivePagination(props) {
     return {
       type: "p",
       attributes: [["class", ["archive-pagination__invalid"]]],
-      children: ["Pagination indisponible."],
+      children: [finalProps.invalidLabel ?? "Pagination is unavailable."],
     };
   }
 
@@ -47,7 +49,7 @@ export default function ArchivePagination(props) {
     type: "nav",
     attributes: [
       ["class", ["archive-pagination"]],
-      ["aria-label", "Pagination des projets"],
+      ["aria-label", finalProps.ariaLabel ?? "Project pagination"],
     ],
     children: [
       paginationButton({

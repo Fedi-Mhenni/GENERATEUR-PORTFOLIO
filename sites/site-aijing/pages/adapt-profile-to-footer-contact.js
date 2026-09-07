@@ -1,12 +1,14 @@
-import { footerSocialLinkDefinitions } from "./static-site-content.js";
-
 function nonEmptyString(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
 // This explicit adaptation keeps Strapi's field names out of UI components.
-export default function adaptProfileToFooterContact(profile, footerCopy) {
-  const socialLinks = footerSocialLinkDefinitions.flatMap((definition) => {
+export default function adaptProfileToFooterContact(
+  profile,
+  footerCopy,
+  socialLinkDefinitions,
+) {
+  const socialLinks = socialLinkDefinitions.flatMap((definition) => {
     const value = nonEmptyString(profile?.[definition.field]);
 
     if (!value) {

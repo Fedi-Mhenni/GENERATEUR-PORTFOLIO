@@ -13,7 +13,7 @@ function preferredImage(image) {
   return image.formats?.large ?? image;
 }
 
-export default function adaptProjectToCard(project) {
+export default function adaptProjectToCard(project, projectHref = "") {
   const image = preferredImage(project?.image);
   const title = nonEmptyString(project?.titre) || "Untitled project";
   const slug = nonEmptyString(project?.slug);
@@ -27,6 +27,6 @@ export default function adaptProjectToCard(project) {
     imageAlt: nonEmptyString(project?.image?.alternativeText) || title,
     imageWidth: image?.width,
     imageHeight: image?.height,
-    href: slug ? `/projects/${slug}` : "",
+    href: slug ? projectHref || `/projects/${slug}` : "",
   };
 }

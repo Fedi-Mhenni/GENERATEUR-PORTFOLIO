@@ -1,4 +1,5 @@
 import validateProps from "../vanilla-engine/src/validation/validate-props.js";
+import BrowserLink from "../vanilla-engine/src/router/link.js";
 import Button from "./button.js";
 import FormField from "./form-field.js";
 import SocialLink from "./social-link.js";
@@ -14,7 +15,12 @@ const schema = {
   messageLabel: { type: "string", required: true },
   messagePlaceholder: { type: "string", required: false, default: "" },
   consentLabel: { type: "string", required: true },
+  privacyLink: { type: "string", required: true },
+  privacyHref: { type: "string", required: true },
   submitLabel: { type: "string", required: true },
+  sending: { type: "string", required: true },
+  success: { type: "string", required: true },
+  error: { type: "string", required: true },
   idPrefix: { type: "string", required: false, default: "contact" },
   illustrationSrc: { type: "string", required: false, default: "" },
   illustrationAlt: { type: "string", required: false, default: "" },
@@ -63,7 +69,7 @@ function formStatus(form, message, type = "") {
   ].join(" ");
 }
 
-async function submitContactForm(event, onSubmit) {
+async function submitContactForm(event, onSubmit, messages) {
   event.preventDefault();
 
   if (!onSubmit) {
@@ -75,21 +81,21 @@ async function submitContactForm(event, onSubmit) {
 
   form.setAttribute("aria-busy", "true");
   submitButton?.setAttribute("disabled", "");
-  formStatus(form, "Sending message…");
+  formStatus(form, messages.sending);
 
   try {
     const result = await onSubmit(new FormData(form));
 
     if (result?.success) {
       form.reset();
-      formStatus(form, "Message sent. Thank you!", "success");
+      formStatus(form, messages.success, "success");
       return;
     }
 
-    formStatus(form, "Message could not be sent. Please try again.", "error");
+    formStatus(form, messages.error, "error");
   } catch (error) {
     console.error("Impossible d'envoyer le message.", error);
-    formStatus(form, "Message could not be sent. Please try again.", "error");
+    formStatus(form, messages.error, "error");
   } finally {
     form.removeAttribute("aria-busy");
     submitButton?.removeAttribute("disabled");
@@ -163,19 +169,23 @@ export default function FooterContact(props) {
             type: "form",
             attributes: [
               ["class", ["footer-contact__form"]],
-              ["aria-label", finalProps.formLabel ?? "Formulaire de contact"],
+              ["aria-label", finalProps.formLabel ?? "Contact form"],
             ],
             events: [
               [
                 "submit",
-                (event) => submitContactForm(event, finalProps.onSubmit),
+                (event) => submitContactForm(event, finalProps.onSubmit, {
+                  sending: finalProps.sending,
+                  success: finalProps.success,
+                  error: finalProps.error,
+                }),
               ],
             ],
             children: [
               FormField({
                 id: `${prefix}-name`,
                 name: "name",
-                label: finalProps.nameLabel ?? "Nom",
+                label: finalProps.nameLabel ?? "Name",
                 placeholder: finalProps.namePlaceholder ?? "",
                 autocomplete: "name",
                 required: true,
@@ -183,7 +193,7 @@ export default function FooterContact(props) {
               FormField({
                 id: `${prefix}-email`,
                 name: "email",
-                label: finalProps.emailLabel ?? "E-mail",
+                label: finalProps.emailLabel ?? "Email",
                 placeholder: finalProps.emailPlaceholder ?? "",
                 type: "email",
                 autocomplete: "email",
@@ -200,12 +210,18 @@ export default function FooterContact(props) {
               FormField({
                 id: `${prefix}-consent`,
                 name: "consent",
-                label: finalProps.consentLabel ?? "Consentement requis",
+                label: `${finalProps.consentLabel} ${finalProps.privacyLink}.`,
+                labelChildren: [
+                  finalProps.consentLabel,
+                  " ",
+                  BrowserLink(finalProps.privacyHref, finalProps.privacyLink),
+                  ".",
+                ],
                 type: "checkbox",
                 required: true,
               }),
               Button({
-                label: finalProps.submitLabel ?? "Envoyer",
+                label: finalProps.submitLabel ?? "Send message",
                 type: "submit",
               }),
               {

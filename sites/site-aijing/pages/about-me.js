@@ -9,10 +9,12 @@ import {
 } from "../services/strapi-api.js";
 import adaptAboutData from "./adapt-about-data.js";
 import { getFooterContactPropsFromProfile } from "./get-footer-contact-props.js";
+import { pathFor, t } from "../i18n/index.js";
 
 const aboutState = {
   status: "loading",
   data: null,
+  records: null,
   profileRecord: null,
   failedSources: [],
 };
@@ -20,7 +22,7 @@ const aboutState = {
 let aboutRequest;
 
 function refreshAboutPage() {
-  if (window.location.pathname === "/about-me") {
+  if (["/about-me", "/en/about-me", "/fr/a-propos"].includes(window.location.pathname)) {
     window.dispatchEvent(new Event("pushstate"));
   }
 }
@@ -44,12 +46,12 @@ function loadAboutData() {
   aboutRequest = Promise.allSettled(sources.map(([, request]) => request))
     .then((results) => {
       aboutState.profileRecord = resultValue(results[0]);
-      aboutState.data = adaptAboutData({
+      aboutState.records = {
         profile: aboutState.profileRecord,
         competencies: resultValue(results[1]),
         journeys: resultValue(results[2]),
         experiences: resultValue(results[3]),
-      });
+      };
       aboutState.failedSources = results.flatMap((result, index) =>
         result.status === "rejected" ? [sources[index][0]] : []
       );
@@ -87,7 +89,7 @@ function cvLink(href) {
       ["target", "_blank"],
       ["rel", "noopener"],
     ],
-    children: ["Download CV"],
+    children: [t("about.downloadCv")],
   };
 }
 
@@ -101,9 +103,9 @@ function introduction(profile) {
           type: "div",
           attributes: [["class", ["about-page__biography"]]],
           children: [
-            { type: "p", attributes: [["class", ["type-label", "about-page__eyebrow"]]], children: ["01 / ABOUT"] },
-            { type: "h1", attributes: [["class", ["type-heading-primary"]]], children: ["About Me"] },
-            { type: "p", attributes: [["class", ["about-page__feedback"]]], children: ["Profile information is temporarily unavailable."] },
+            { type: "p", attributes: [["class", ["type-label", "about-page__eyebrow"]]], children: [t("about.eyebrow")] },
+            { type: "h1", attributes: [["class", ["type-heading-primary"]]], children: [t("about.title")] },
+            { type: "p", attributes: [["class", ["about-page__feedback"]]], children: [t("about.profileUnavailable")] },
           ],
         },
       ],
@@ -132,7 +134,7 @@ function introduction(profile) {
         type: "div",
         attributes: [["class", ["about-page__biography"]]],
         children: [
-          { type: "p", attributes: [["class", ["type-label", "about-page__eyebrow"]]], children: ["01 / ABOUT"] },
+          { type: "p", attributes: [["class", ["type-label", "about-page__eyebrow"]]], children: [t("about.eyebrow")] },
           { type: "h1", attributes: [["class", ["type-heading-primary"]]], children: [profile.title] },
           ...(profile.biography
             ? [{ type: "p", attributes: [["class", ["about-page__biography-copy"]]], children: [profile.biography] }]
@@ -174,31 +176,34 @@ function parcoursSection({ label, title, entries, className, alignEnd }) {
   };
 }
 
-function aboutContent() {
+function aboutContent(locale) {
   if (aboutState.status === "loading") {
     return [pageStatus({
       role: "status",
-      title: "Loading About Me…",
-      copy: "Profile, skills and experience are loading.",
+      title: t("about.loadingTitle"),
+      copy: t("about.loadingCopy"),
     })];
   }
 
   if (aboutState.status === "error") {
     return [pageStatus({
       role: "alert",
-      title: "About Me unavailable",
-      copy: "The page is temporarily unavailable. Please try again later.",
+      title: t("about.unavailableTitle"),
+      copy: t("about.unavailableCopy"),
     })];
   }
 
-  const { profile, skills, journeys, experiences } = aboutState.data;
+  const { profile, skills, journeys, experiences } = adaptAboutData(
+    aboutState.records,
+    locale,
+  );
   const sections = [
     introduction(profile),
     ...(aboutState.failedSources.length
       ? [{
           type: "p",
           attributes: [["class", ["about-page__partial-feedback"]], ["role", "status"]],
-          children: ["Some profile information is temporarily unavailable."],
+          children: [t("about.partialUnavailable")],
         }]
       : []),
   ];
@@ -208,7 +213,7 @@ function aboutContent() {
       type: "section",
       attributes: [["class", ["about-page__skills"]]],
       children: [
-        sectionHeading("02 / PRACTICE", "Skills"),
+        sectionHeading(t("about.skillsLabel"), t("about.skillsTitle")),
         {
           type: "div",
           attributes: [["class", ["about-page__skill-groups"]]],
@@ -219,13 +224,13 @@ function aboutContent() {
   }
 
   const education = parcoursSection({
-    label: "03 / EDUCATION",
+    label: t("about.educationLabel"),
     title: "",
     entries: journeys,
     className: "about-page__education",
   });
   const experiencesSection = parcoursSection({
-    label: "04 / EXPERIENCES",
+    label: t("about.experiencesLabel"),
     title: "",
     entries: experiences,
     className: "about-page__experiences",
@@ -235,19 +240,20 @@ function aboutContent() {
   return [...sections, ...[education, experiencesSection].filter(Boolean)];
 }
 
-export default function AboutMePage() {
+export default function AboutMePage({ locale = "en" } = {}) {
   loadAboutData();
-  const footerProps = getFooterContactPropsFromProfile(aboutState.profileRecord);
+  const footerProps = getFooterContactPropsFromProfile(aboutState.profileRecord, locale);
 
   return SiteLayout({
-    currentPath: "/about-me",
+    currentPath: pathFor(locale, "about"),
     mainClassName: "about-page",
     footerProps,
+    locale,
     mainChildren: [
       {
         type: "div",
         attributes: [["class", ["about-page__content"]]],
-        children: aboutContent(),
+        children: aboutContent(locale),
       },
     ],
   });

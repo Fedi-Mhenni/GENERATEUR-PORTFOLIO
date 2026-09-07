@@ -2,7 +2,7 @@
     --color-paper: #f4f0e6;
     --color-paper-deep: #e7ddcb;
     --color-ink: #1d1b18;
-    --color-muted: #746e65;
+    --color-muted: #706a61;
     --color-line: #c9bdab;
     --color-rust: #d85b42;
     --color-rust-dark: #a53e2d;
@@ -26,8 +26,8 @@
     --text-display-brand: 5.625rem;
     --leading-display-brand: 0.822222;
     --tracking-display-brand: -0.075em;
-    --text-body: 1rem;
-    --text-label: 0.75rem;
+    --text-body: 1.125rem;
+    --text-label: 0.875rem;
     --text-heading-primary: 3.375rem;
     --text-heading-secondary: 2.5rem;
     --radius-none: 0;

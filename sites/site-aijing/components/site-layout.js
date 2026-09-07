@@ -8,6 +8,7 @@ const schema = {
   mainClassName: { type: "string", required: true },
   mainChildren: { type: "array", required: true },
   footerProps: { type: "object", required: true },
+  locale: { type: "string", required: false, default: "en" },
 };
 
 export default function SiteLayout(props) {
@@ -28,13 +29,13 @@ export default function SiteLayout(props) {
       {
         type: "a",
         attributes: [["class", ["skip-link"]], ["href", "#main-content"]],
-        children: ["Aller au contenu principal"],
+        children: [finalProps.locale === "fr" ? "Aller au contenu principal" : "Skip to main content"],
       },
       {
         type: "div",
         attributes: [["class", ["site-layout__top-target"]], ["id", "site-top"]],
       },
-      Navbar({ currentPath: finalProps.currentPath ?? "" }),
+      Navbar({ currentPath: finalProps.currentPath ?? "", locale: finalProps.locale }),
       {
         type: "main",
         attributes: [
@@ -45,7 +46,10 @@ export default function SiteLayout(props) {
         children: finalProps.mainChildren ?? [],
       },
       FooterContact(finalProps.footerProps ?? {}),
-      TopLink({ label: "TOP ↑", accessibleLabel: "Retour en haut" }),
+      TopLink({
+        label: "TOP ↑",
+        accessibleLabel: finalProps.locale === "fr" ? "Retour en haut" : "Back to top",
+      }),
     ],
   };
 }
