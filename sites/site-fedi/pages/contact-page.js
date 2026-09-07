@@ -1,8 +1,14 @@
-import BrowserLink from "../vanilla-engine/src/router/link.js";
+import { getProfil } from "../services/strapi-api.js";
 import validateProps from "../vanilla-engine/src/validation/validate-props.js";
 import sendEmail from "../vanilla-engine/src/email/index.js";
 import config from "../config.js";
+import Navbar from "../components/navbar.js";
+import Footer from "../components/footer.js";
+import ExportPdfButton from "../components/export-pdf-button.js";
 
+// Maquette Figma (node 223:760) : 3 champs (Name, Email, Message) — pas de
+// champ "Objet", retiré ici pour rester fidèle (il existait avant, purement
+// optionnel, mais absent du design).
 const schema = {
   nom: { type: "string", required: true },
   email: {
@@ -10,17 +16,20 @@ const schema = {
     required: true,
     pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   },
-  objet: { type: "string", required: false },
   message: { type: "string", required: true, minLength: 10 },
 };
 
 function field(name, label, inputType) {
   const input =
     inputType === "textarea"
-      ? { type: "textarea", attributes: [["name", name], ["id", name]] }
+      ? {
+          type: "textarea",
+          attributes: [["class", ["contact__input", "contact__input--textarea"]], ["name", name], ["id", name]],
+        }
       : {
           type: "input",
           attributes: [
+            ["class", ["contact__input"]],
             ["type", inputType],
             ["name", name],
             ["id", name],
@@ -29,8 +38,9 @@ function field(name, label, inputType) {
 
   return {
     type: "div",
+    attributes: [["class", ["contact__field"]]],
     children: [
-      { type: "label", attributes: [["for", name]], children: [label] },
+      { type: "label", attributes: [["class", ["contact__label"]], ["for", name]], children: [label] },
       input,
       {
         type: "p",
@@ -56,7 +66,6 @@ async function handleSubmit(event) {
   const values = {
     nom: form.elements.nom.value,
     email: form.elements.email.value,
-    objet: form.elements.objet.value,
     message: form.elements.message.value,
   };
 
@@ -90,33 +99,86 @@ async function handleSubmit(event) {
   }
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const profilData = await getProfil();
+  const profil = profilData?.attributes ?? profilData;
+  const footer = await Footer();
+
   return {
     type: "div",
+    attributes: [["class", ["page"]]],
     children: [
-      BrowserLink("/", "← Retour à l'accueil"),
-      { type: "h1", children: ["Contact"] },
+      Navbar(),
+      ExportPdfButton(),
       {
-        type: "form",
-        attributes: [["novalidate", "novalidate"]],
-        events: [["submit", handleSubmit]],
+        type: "main",
+        attributes: [["class", ["container", "contact", "page__content"]]],
         children: [
-          field("nom", "Nom", "text"),
-          field("email", "Email", "email"),
-          field("objet", "Objet", "text"),
-          field("message", "Message", "textarea"),
           {
-            type: "button",
-            attributes: [["type", "submit"]],
-            children: ["Envoyer"],
+            type: "section",
+            attributes: [["class", ["contact__intro"]]],
+            children: [
+              { type: "h1", attributes: [["class", ["contact__title"]]], children: ["Let's build something together"] },
+              {
+                type: "p",
+                attributes: [["class", ["contact__tagline"]]],
+                children: ["Got a project in mind, or just want to say hi? My inbox is open."],
+              },
+              {
+                type: "div",
+                attributes: [["class", ["contact__meta"]]],
+                children: [
+                  ...(profil?.email
+                    ? [
+                        {
+                          type: "span",
+                          attributes: [["class", ["contact__meta-item"]]],
+                          children: [
+                            { type: "span", attributes: [["class", ["contact__meta-icon"]]], children: ["✉"] },
+                            profil.email,
+                          ],
+                        },
+                      ]
+                    : []),
+                  ...(profil?.localisation
+                    ? [
+                        {
+                          type: "span",
+                          attributes: [["class", ["contact__meta-item"]]],
+                          children: [
+                            { type: "span", attributes: [["class", ["contact__meta-icon"]]], children: ["⌂"] },
+                            profil.localisation,
+                          ],
+                        },
+                      ]
+                    : []),
+                ],
+              },
+            ],
           },
           {
-            type: "p",
-            attributes: [["class", ["form__feedback"]], ["data-feedback", "true"]],
-            children: [""],
+            type: "form",
+            attributes: [["class", ["contact__form"]], ["novalidate", "novalidate"]],
+            events: [["submit", handleSubmit]],
+            children: [
+              field("nom", "Name", "text"),
+              field("email", "Email", "email"),
+              field("message", "Message", "textarea"),
+              {
+                type: "button",
+                attributes: [["type", "submit"], ["class", ["btn", "btn--primary", "btn--large", "contact__submit"]]],
+                children: ["Send message"],
+              },
+              {
+                type: "p",
+                attributes: [["class", ["form__feedback"]], ["data-feedback", "true"]],
+                children: [""],
+              },
+            ],
           },
         ],
       },
+      footer,
     ],
   };
 }

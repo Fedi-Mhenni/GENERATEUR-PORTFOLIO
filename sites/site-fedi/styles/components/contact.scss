@@ -1,10 +1,125 @@
-// Contact : le style complet de la page arrive dans une passe dédiée
-// (voir home/about/navbar/footer pour le pattern). Pour l'instant, juste les
-// états du message de résultat de l'envoi (succès/erreur), nécessaires dès
-// le câblage de sendEmail() — couleurs déjà définies dans variables.scss.
+// Contact, fidèle à la maquette Figma (node 223:760) : titre + accroche +
+// email/localisation centrés, puis une carte (formulaire) en dessous.
+.contact {
+  padding-top: calc(var(--spacing-nav-gap) * 2);
+  flex: 1 0 auto; // pousse le footer en bas même si le contenu est court
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--spacing-nav-gap) * 1.25); // 40px, gap exact de la maquette
+}
+
+.contact__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px; // gap exact de la maquette
+  text-align: center;
+}
+
+.contact__title {
+  font-size: var(--font-h1);
+  color: var(--color-text-primary);
+}
+
+.contact__tagline {
+  font-size: var(--font-label);
+  color: var(--color-text-muted);
+}
+
+.contact__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-nav-gap);
+  margin-top: var(--spacing-button-padding-y);
+}
+
+.contact__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--font-caption);
+  color: var(--color-text-primary);
+}
+
+.contact__meta-icon {
+  font-size: var(--font-label);
+  color: var(--color-text-muted);
+}
+
+// La carte-formulaire : fond accent, coins arrondis, même vocabulaire que
+// .projet-carte (Projets) et .about__accordion-item (About).
+.contact__form {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+  padding: 56px;
+  background-color: var(--color-bg-accent);
+  border-radius: 24px;
+}
+
+.contact__field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.contact__label {
+  font-size: var(--font-caption);
+  color: var(--color-text-primary);
+}
+
+.contact__input {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--spacing-button-padding-y);
+  background-color: var(--color-bg-input);
+  border: 1px solid var(--color-border-input);
+  border-radius: 10px;
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+  color: var(--color-text-primary);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.contact__input--textarea {
+  height: 120px;
+  padding-top: var(--spacing-button-padding-y);
+  resize: vertical;
+}
+
+.contact__submit {
+  width: 100%;
+}
+
+.erreur-champ {
+  font-size: var(--font-caption);
+  color: var(--color-state-error);
+
+  &:empty {
+    display: none;
+  }
+}
+
+// États du message de résultat de l'envoi (succès/erreur) — couleurs déjà
+// définies dans variables.scss.
 .form__feedback {
   font-size: var(--font-body);
   color: var(--color-text-primary);
+  text-align: center;
+
+  &:empty {
+    display: none;
+  }
 }
 
 .form__feedback--success {
@@ -13,4 +128,13 @@
 
 .form__feedback--error {
   color: var(--color-state-error);
+}
+
+// Une seule media query : la carte (déjà max-width:700px, width:100%) et la
+// colonne du formulaire s'adaptent déjà nativement à un écran étroit — le
+// seul ajustement nécessaire est le padding interne de la carte.
+@media (max-width: 768px) {
+  .contact__form {
+    padding: var(--spacing-nav-gap);
+  }
 }

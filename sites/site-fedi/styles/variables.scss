@@ -21,6 +21,12 @@
   --color-border-button-secondary: #22333b;
   --color-state-success: #2e572e;
   --color-state-error: #8a3228;
+  // Ajoutés pour Contact (maquette Figma "Contact — Desktop") : aucune de
+  // ces 3 valeurs ne correspondait à un token déjà défini, vérifié via
+  // get_variable_defs avant d'en conclure qu'elles étaient nouvelles.
+  --color-text-muted: #877564; // accroche + icônes email/localisation
+  --color-bg-input: #ffffff;
+  --color-border-input: #d9d9d9;
 
   // Typographie — tailles (6 styles, STIX Two Math Regular sauf mention)
   // En rem (base 16px = 1rem), pour respecter la taille de police définie
