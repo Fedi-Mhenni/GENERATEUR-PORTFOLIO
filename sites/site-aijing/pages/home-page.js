@@ -5,7 +5,8 @@ import { getLatestProjets, getProfil } from "../services/strapi-api.js";
 import adaptProfileToHome from "./adapt-profile-to-home.js";
 import adaptProjectToCard from "./adapt-project-to-card.js";
 import { getFooterContactPropsFromProfile } from "./get-footer-contact-props.js";
-import { homeCopy } from "./static-site-content.js";
+import { getStaticSiteContent } from "./static-site-content.js";
+import { pathFor, t } from "../i18n/index.js";
 
 const latestProjectsState = {
   status: "loading",
@@ -15,7 +16,7 @@ const latestProjectsState = {
 let latestProjectsRequest;
 
 function refreshHome() {
-  if (window.location.pathname === "/") {
+  if (/^\/(?:en|fr)?$/.test(window.location.pathname)) {
     window.dispatchEvent(new Event("pushstate"));
   }
 }
@@ -54,12 +55,12 @@ function pageLink(href, label, className) {
   return link;
 }
 
-function latestProjectsContent() {
+function latestProjectsContent(locale, homeCopy) {
   if (latestProjectsState.status === "loading") {
     return [{
       type: "p",
       attributes: [["class", ["home-page__projects-status"]], ["role", "status"]],
-      children: ["Loading latest projects…"],
+      children: [t("home.loading")],
     }];
   }
 
@@ -67,7 +68,7 @@ function latestProjectsContent() {
     return [{
       type: "p",
       attributes: [["class", ["home-page__projects-status"]], ["role", "alert"]],
-      children: ["Latest projects are temporarily unavailable."],
+      children: [t("home.unavailable")],
     }];
   }
 
@@ -75,7 +76,7 @@ function latestProjectsContent() {
     return [{
       type: "p",
       attributes: [["class", ["home-page__projects-status"]]],
-      children: ["No projects are available yet."],
+      children: [t("home.empty")],
     }];
   }
 
@@ -85,7 +86,10 @@ function latestProjectsContent() {
     children: latestProjectsState.projects.map((project) => ({
       type: "li",
       children: [ProjectCard({
-        ...adaptProjectToCard(project),
+        ...adaptProjectToCard(
+          project,
+          pathFor(locale, "project", { slug: project?.slug ?? "" }),
+        ),
         variant: "featured",
         detailLabel: homeCopy.projectDetailLabel,
       })],
@@ -93,16 +97,18 @@ function latestProjectsContent() {
   }];
 }
 
-export default async function HomePage() {
+export default async function HomePage({ locale = "en" } = {}) {
   loadLatestProjects();
+  const { homeCopy } = getStaticSiteContent(locale);
   const profile = await loadHomeProfile();
   const hero = adaptProfileToHome(profile, homeCopy);
-  const footerProps = getFooterContactPropsFromProfile(profile);
+  const footerProps = getFooterContactPropsFromProfile(profile, locale);
 
   return SiteLayout({
-    currentPath: "/",
+    currentPath: pathFor(locale, "home"),
     mainClassName: "home-page",
     footerProps,
+    locale,
     mainChildren: [
       {
         type: "div",
@@ -131,7 +137,7 @@ export default async function HomePage() {
                     attributes: [["class", ["home-page__hero-introduction"]]],
                     children: [hero.introduction],
                   },
-                  pageLink("/about-me", homeCopy.heroCta, "home-page__hero-cta"),
+                  pageLink(pathFor(locale, "about"), homeCopy.heroCta, "home-page__hero-cta"),
                 ],
               },
               {
@@ -166,8 +172,8 @@ export default async function HomePage() {
                   },
                 ],
               },
-              ...latestProjectsContent(),
-              pageLink("/projects", homeCopy.projectsCta, "home-page__projects-cta"),
+              ...latestProjectsContent(locale, homeCopy),
+              pageLink(pathFor(locale, "projects"), homeCopy.projectsCta, "home-page__projects-cta"),
             ],
           },
           {

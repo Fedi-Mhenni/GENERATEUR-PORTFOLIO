@@ -6,6 +6,7 @@ const schema = {
   nextHref: { type: "string", required: false, default: "" },
   previousLabel: { type: "string", required: false, default: "← Previous project" },
   nextLabel: { type: "string", required: false, default: "Next project →" },
+  ariaLabel: { type: "string", required: false, default: "Project navigation" },
 };
 
 function navigationLink(href, label) {
@@ -39,7 +40,7 @@ export default function ProjectDetailPagination(props) {
     type: "nav",
     attributes: [
       ["class", ["project-detail-pagination"]],
-      ["aria-label", "Project navigation"],
+      ["aria-label", finalProps.ariaLabel ?? "Project navigation"],
     ],
     children: [
       navigationLink(

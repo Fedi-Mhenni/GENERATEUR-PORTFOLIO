@@ -8,6 +8,7 @@ import SocialLink from "../components/social-link.js";
 import { getProjetBySlug, getProjetsByDate } from "../services/strapi-api.js";
 import adaptProjectToDetail from "./adapt-project-to-detail.js";
 import getFooterContactProps from "./get-footer-contact-props.js";
+import { pathFor, t } from "../i18n/index.js";
 
 const projectStates = new Map();
 
@@ -15,13 +16,13 @@ function projectSlug(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function refreshProjectDetail(slug) {
-  if (window.location.pathname === `/projects/${slug}`) {
+function refreshProjectDetail(slug, locale) {
+  if (window.location.pathname === pathFor(locale, "project", { slug })) {
     window.dispatchEvent(new Event("pushstate"));
   }
 }
 
-function projectNeighbours(projects, slug) {
+function projectNeighbours(projects, slug, locale) {
   const currentIndex = projects.findIndex((project) => project?.slug === slug);
 
   if (currentIndex === -1) {
@@ -32,26 +33,26 @@ function projectNeighbours(projects, slug) {
   const next = projects[currentIndex + 1];
 
   return {
-    previousHref: previous?.slug ? `/projects/${previous.slug}` : "",
-    nextHref: next?.slug ? `/projects/${next.slug}` : "",
+    previousHref: previous?.slug ? pathFor(locale, "project", { slug: previous.slug }) : "",
+    nextHref: next?.slug ? pathFor(locale, "project", { slug: next.slug }) : "",
   };
 }
 
-async function loadProjectDetail(slug) {
+async function loadProjectDetail(slug, locale) {
   const project = await getProjetBySlug(slug);
 
   if (!project) {
     return { status: "not-found" };
   }
 
-  const detail = adaptProjectToDetail(project);
+  const detail = adaptProjectToDetail(project, locale);
 
   try {
     const projects = await getProjetsByDate();
     return {
       status: "success",
       detail,
-      neighbours: projectNeighbours(Array.isArray(projects) ? projects : [], slug),
+      neighbours: projectNeighbours(Array.isArray(projects) ? projects : [], slug, locale),
     };
   } catch (error) {
     console.error("Impossible de charger la navigation des projets Strapi.", error);
@@ -63,27 +64,28 @@ async function loadProjectDetail(slug) {
   }
 }
 
-function projectState(slug) {
+function projectState(slug, locale) {
   if (!slug) {
     return { status: "not-found" };
   }
 
-  const currentState = projectStates.get(slug);
+  const stateKey = `${locale}:${slug}`;
+  const currentState = projectStates.get(stateKey);
 
   if (currentState) {
     return currentState;
   }
 
   const state = { status: "loading" };
-  projectStates.set(slug, state);
+  projectStates.set(stateKey, state);
 
-  loadProjectDetail(slug)
+  loadProjectDetail(slug, locale)
     .then((result) => Object.assign(state, result))
     .catch((error) => {
       console.error("Impossible de charger le projet Strapi.", error);
       state.status = "error";
     })
-    .finally(() => refreshProjectDetail(slug));
+    .finally(() => refreshProjectDetail(slug, locale));
 
   return state;
 }
@@ -136,8 +138,8 @@ function projectMedia(detail) {
   };
 }
 
-function projectHero(detail) {
-  const metadata = detail.date ? `DATE  ${detail.date}` : "";
+function projectHero(detail, locale) {
+  const metadata = detail.date ? `${t("project.datePrefix")}  ${detail.date}` : "";
 
   return {
     type: "section",
@@ -187,7 +189,7 @@ function projectHero(detail) {
             type: "div",
             attributes: [["class", ["project-detail-page__actions"]]],
             children: [
-              pageLink("/projects", "Back to projects", "project-detail-page__back-link"),
+              pageLink(pathFor(locale, "projects"), t("project.back"), "project-detail-page__back-link"),
               ...(detail.githubUrl
                 ? [SocialLink({
                     href: detail.githubUrl,
@@ -204,7 +206,7 @@ function projectHero(detail) {
   };
 }
 
-function statusContent(status, title, copy) {
+function statusContent(status, title, copy, locale) {
   return [{
     type: "section",
     attributes: [
@@ -214,26 +216,26 @@ function statusContent(status, title, copy) {
     children: [
       { type: "h1", attributes: [["class", ["type-heading-primary"]]], children: [title] },
       { type: "p", children: [copy] },
-      ...(status === "status" ? [] : [pageLink("/projects", "Back to projects", "project-detail-page__back-link")]),
+      ...(status === "status" ? [] : [pageLink(pathFor(locale, "projects"), t("project.back"), "project-detail-page__back-link")]),
     ],
   }];
 }
 
-function projectDetailContent(state) {
+function projectDetailContent(state, locale) {
   if (state.status === "loading") {
-    return statusContent("status", "Loading project…", "The project details are loading.");
+    return statusContent("status", t("project.loadingTitle"), t("project.loadingCopy"), locale);
   }
 
   if (state.status === "error") {
-    return statusContent("alert", "Project unavailable", "The project details are temporarily unavailable.");
+    return statusContent("alert", t("project.unavailableTitle"), t("project.unavailableCopy"), locale);
   }
 
   if (state.status === "not-found") {
-    return statusContent("", "Project not found", "This project does not exist or is no longer available.");
+    return statusContent("", t("project.notFoundTitle"), t("project.notFoundCopy"), locale);
   }
 
   return [
-    projectHero(state.detail),
+    projectHero(state.detail, locale),
     ...(state.detail.narratives.length
       ? [{
           type: "div",
@@ -242,24 +244,32 @@ function projectDetailContent(state) {
         }]
       : []),
     ...(state.detail.galleryImages.length
-      ? [Gallery({ images: state.detail.galleryImages })]
+      ? [Gallery({
+          images: state.detail.galleryImages,
+          label: t("project.galleryLabel"),
+          title: t("project.galleryTitle"),
+        })]
       : []),
     ProjectDetailPagination({
       previousHref: state.neighbours.previousHref,
       nextHref: state.neighbours.nextHref,
+      previousLabel: t("project.previous"),
+      nextLabel: t("project.next"),
+      ariaLabel: t("project.navigationLabel"),
     }),
   ];
 }
 
-export default async function ProjectDetailPage({ slug } = {}) {
+export default async function ProjectDetailPage({ slug, locale = "en" } = {}) {
   const normalizedSlug = projectSlug(slug);
-  const state = projectState(normalizedSlug);
-  const footerProps = await getFooterContactProps();
+  const state = projectState(normalizedSlug, locale);
+  const footerProps = await getFooterContactProps(locale);
 
   return SiteLayout({
-    currentPath: "/projects",
+    currentPath: pathFor(locale, "projects"),
     mainClassName: "project-detail-page",
     footerProps,
+    locale,
     mainChildren: [
       AmbientBlur({
         src: "/assets/images/ambient-blur-upper-right.svg",
@@ -269,7 +279,7 @@ export default async function ProjectDetailPage({ slug } = {}) {
       {
         type: "div",
         attributes: [["class", ["project-detail-page__content"]]],
-        children: projectDetailContent(state),
+        children: projectDetailContent(state, locale),
       },
     ],
   });

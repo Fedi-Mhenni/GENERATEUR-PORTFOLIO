@@ -5,7 +5,8 @@ import SiteLayout from "../components/site-layout.js";
 import { getProjetsPage } from "../services/strapi-api.js";
 import adaptProjectToCard from "./adapt-project-to-card.js";
 import getFooterContactProps from "./get-footer-contact-props.js";
-import { projectsArchiveCopy } from "./static-site-content.js";
+import { getStaticSiteContent } from "./static-site-content.js";
+import { pathFor, t } from "../i18n/index.js";
 
 const projectsPerPage = 6;
 
@@ -35,14 +36,15 @@ async function loadProjectsPage(requestedPage) {
   };
 }
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({ locale = "en" } = {}) {
   const requestedPage = Number.parseInt(
     new URLSearchParams(window.location.search).get("page") ?? "1",
     10,
   );
   const page =
     Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
-  const footerPropsPromise = getFooterContactProps();
+  const footerPropsPromise = getFooterContactProps(locale);
+  const { projectsArchiveCopy } = getStaticSiteContent(locale);
   let projectsPage;
   let projectsLoadFailed = false;
 
@@ -55,7 +57,13 @@ export default async function ProjectsPage() {
   }
 
   const footerProps = await footerPropsPromise;
-  const visibleProjects = projectsPage.projects.map(adaptProjectToCard);
+  const visibleProjects = projectsPage.projects.map((project) => ({
+    ...adaptProjectToCard(
+      project,
+      pathFor(locale, "project", { slug: project?.slug ?? "" }),
+    ),
+    detailLabel: t("home.projectDetailLabel"),
+  }));
 
   function changePage(page) {
     const nextUrl = new URL(window.location.href);
@@ -65,9 +73,10 @@ export default async function ProjectsPage() {
   }
 
   return SiteLayout({
-    currentPath: "/projects",
+    currentPath: pathFor(locale, "projects"),
     mainClassName: "projects-page",
     footerProps,
+    locale,
     mainChildren: [
       AmbientBlur({
         src: "/assets/images/ambient-blur-upper-right.svg",
@@ -114,7 +123,7 @@ export default async function ProjectsPage() {
                 {
                   type: "p",
                   attributes: [["role", ["status"]]],
-                  children: ["Projects are temporarily unavailable."],
+                  children: [t("projects.unavailable")],
                 },
               ]
             : []),
@@ -122,8 +131,10 @@ export default async function ProjectsPage() {
             currentPage: projectsPage.currentPage,
             totalPages: projectsPage.totalPages,
             onPageChange: changePage,
-            previousLabel: "← Previous",
-            nextLabel: "Next →",
+            previousLabel: t("projects.previous"),
+            nextLabel: t("projects.next"),
+            ariaLabel: t("projects.paginationLabel"),
+            invalidLabel: t("projects.paginationUnavailable"),
           }),
         ],
       },
