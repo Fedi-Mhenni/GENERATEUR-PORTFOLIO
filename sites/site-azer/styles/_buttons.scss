@@ -1,0 +1,75 @@
+@use "variables" as *;
+
+$color-primary-hover: #0559d7;
+$color-text-hover: #2b2b2b;
+$color-danger-hover: #c40000;
+
+%btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2 $space-4;
+  border-radius: $radius-md;
+  border: none;
+  font-family: $font-family;
+  font-size: $font-size-body;
+  font-weight: $font-weight-small;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus-visible {
+    outline: $focus-outline-width solid $focus-outline-color;
+    outline-offset: $focus-outline-offset;
+  }
+}
+
+.btn-primary {
+  @extend %btn-base;
+  background-color: $color-primary;
+  color: $color-white;
+  box-shadow: $shadow-sm;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+}
+
+.btn-secondary {
+  @extend %btn-base;
+  background-color: $color-text;
+  color: $color-white;
+
+  &:hover {
+    background-color: $color-text-hover;
+  }
+}
+
+.btn-danger {
+  @extend %btn-base;
+  background-color: $color-danger;
+  color: $color-white;
+
+  &:hover {
+    background-color: $color-danger-hover;
+  }
+}
+
+.btn-ghost {
+  @extend %btn-base;
+  background-color: transparent;
+  color: $color-primary;
+  border: 1px solid $color-primary;
+
+  &:hover {
+    background-color: rgba($color-primary, 0.08);
+  }
+}
+
+.btn-disabled {
+  @extend %btn-base;
+  background-color: $color-surface;
+  color: $color-text-secondary;
+  cursor: not-allowed;
+  box-shadow: none;
+}

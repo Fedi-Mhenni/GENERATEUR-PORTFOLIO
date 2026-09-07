@@ -3,3 +3,5 @@ env/*.env
 
 # Données runtime TLS créées seulement sur le VPS (certificats et challenges)
 certbot/
+
+.deploy-state/

@@ -1,0 +1,135 @@
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/Newsreader-Variable.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/DMMono-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../assets/fonts/DMMono-Medium.ttf") format("truetype");
+}
+
+html {
+  font-size: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.5625;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 0.1875rem solid var(--color-rust);
+  outline-offset: 0.125rem;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  text-decoration: none;
+  transform: translateY(-100%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.container {
+  width: min(100% - 2.5rem, 80rem);
+  margin-inline: auto;
+}
+
+.type-display-brand {
+  font-family: var(--font-display);
+  font-size: var(--text-display-brand);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display-brand);
+  line-height: var(--leading-display-brand);
+}
+
+.type-heading-primary {
+  font-family: var(--font-heading);
+  font-size: var(--text-heading-primary);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.944444;
+}
+
+.type-heading-secondary {
+  font-family: var(--font-heading);
+  font-size: var(--text-heading-secondary);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.type-label {
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.333333;
+}
+
+@media (max-width: 48rem) {
+  .type-display-brand {
+    font-size: clamp(3rem, 15vw, var(--text-display-brand));
+  }
+
+  .type-heading-primary {
+    font-size: clamp(2.5rem, 11vw, var(--text-heading-primary));
+  }
+
+  .type-heading-secondary {
+    font-size: clamp(2rem, 9vw, var(--text-heading-secondary));
+  }
+}

@@ -1,0 +1,38 @@
+:root {
+    --color-paper: #f4f0e6;
+    --color-paper-deep: #e7ddcb;
+    --color-ink: #1d1b18;
+    --color-muted: #706a61;
+    --color-line: #c9bdab;
+    --color-rust: #d85b42;
+    --color-rust-dark: #a53e2d;
+    --color-sky: #c9e6e6;
+    --color-error: #a53e2d;
+    --color-success: #326247;
+
+    --space-2xs: 0.375rem;
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.25rem;
+    --space-xl: 1.5rem;
+    --space-2xl: 2rem;
+    --space-3xl: 3rem;
+    --space-4xl: 5rem;
+
+    --font-display: "Newsreader", Georgia, serif;
+    --font-heading: "Newsreader", Georgia, serif;
+    --font-body: "DM Mono", monospace;
+    --text-display-brand: 5.625rem;
+    --leading-display-brand: 0.822222;
+    --tracking-display-brand: -0.075em;
+    --text-body: 1.125rem;
+    --text-label: 0.875rem;
+    --text-heading-primary: 3.375rem;
+    --text-heading-secondary: 2.5rem;
+    --radius-none: 0;
+    --border-thin: 0.0625rem;
+
+
+    --text-secondary: var(--color-ink);
+}

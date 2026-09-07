@@ -1,4 +1,3 @@
-# sites/
 
 Ce dossier contient un sous-dossier par user, chacun étant le code
 applicatif propre à son portfolio (pages, routes, services, configuration).
@@ -6,98 +5,87 @@ applicatif propre à son portfolio (pages, routes, services, configuration).
 Chaque site consomme le framework partagé situé dans `packages/vanilla-engine/`
 (voir son README pour le détail du framework lui-même).
 
-## Structure attendue par site
+# Structure attendue par site
 ```
 sites/site-<prenom>/
 ├── index.html
 ├── index.js
-├── config.js
+├── config.js       # configuration de production
+├── config.local.js # configuration de développement
 ├── vanilla-engine/ # lien symbolique vers packages/vanilla-engine/ (voir ci-dessous)
 ├── pages/
 ├── routes/
 └── services/
 ```
 
-## Mise en place initiale (une seule fois, après avoir cloné le repo)
+# Lancer localement
+Pour lancer localement et connecter le front local et le back local:
 
-Chaque site dépend de `packages/vanilla-engine/`. Pour pouvoir développer et
-tester son site **de façon isolée** (sans dépendre du reste du monorepo),
-chaque étudiant doit créer un lien symbolique vers le framework partagé,
-**depuis son propre dossier** :
+---
+** Ceci n'est à faire qu'une fois.
 
+1. Créer un fichier `config.local.js` dans `sites/site-<prenom à remplacer>` avec
+```
+const config = {
+    API_ORIGIN: "http://localhost:1337",
+    API_URL: "http://localhost:1337/api",
+};
+
+export default config;
+```
+2. Créer une seule fois le lien symbolique depuis `sites/site-<prenom à remplacer>`
 ```bash
 cd sites/site-<prenom>
 ln -s ../../packages/vanilla-engine vanilla-engine
 ```
+Chaque site utilise le framework partagé situé dans `packages/vanilla-engine/`.
 
-Puis, dans `index.js`, importer le framework via ce lien local plutôt qu'un
-chemin relatif traversant plusieurs dossiers :
-
-```js
-import BrowserRouter from "./vanilla-engine/src/router/browser-router.js";
+3. Dans `backend/.env`, ajouter une ligne:
+```
+CORS_ORIGIN=http://localhost:3000
 ```
 
-Ce lien symbolique n'est **pas committé** dans Git (pour éviter tout
-problème de compatibilité entre systèmes d'exploitation) — chacun le recrée
-une fois localement après avoir cloné ou pull le repo.
+** Ceci n'est à faire qu'une fois.
 
-## Démarrage en développement
+---
 
-Une fois le lien symbolique créé, chaque site peut être servi et testé de
-façon totalement indépendante, directement depuis son propre dossier :
+4.Lance le compose à `/backend`
 
-```bash
-cd sites/site-<prenom>
-npx serve -s -S .
+5.Depuis racine de projet, lance
 ```
+node scripts/build-site.mjs site-<prenom>
+cp sites/site-<prenom>/config.local.js dist/site-<prenom>/config.js
+npx serve -s dist/site-<prenom>
+```
+Normalement le site est servi à  `http://localhost:3000/`.  Si le port 3000 est occupé, `serve` choisit un autre port : reporter alors cette origine dans `CORS_ORIGIN`, puis redémarrer Strapi.
 
-- `-s` : mode SPA (redirige les routes inconnues vers `index.html`, nécessaire
-  pour le routeur History API du framework)
-- `-S` : suit les liens symboliques (indispensable, sans ce flag le serveur
-  renvoie une erreur 404 sur tout ce qui passe par `vanilla-engine/`)
+**❗️ À CHAQUE modification, relancez les commandes de l’étape 5 afin de reconstruire et visualiser le site. ❗️**
 
-Puis ouvrir directement :
-http://localhost:3000/
+## Petite explication
+- `config.js` contient les URLs de **production** (API HTTPS publique). C’est
+  la configuration qui doit être utilisée pour un build ou un déploiement.
+- `config.local.js` contient les URLs de **développement local** :
 
-Aucun préfixe `/sites/site-xxx/` n'est nécessaire avec cette méthode — le
-dossier du site devient lui-même la racine du serveur.
 
-## Organisation Git un site, une branche, ses propres commits
+Le code du site importe toujours `config.js`. Lors du lancement local, la  commande `cp` remplace donc seulement `dist/site-<prenom>/config.js` par `config.local.js`. Le fichier source de
+production n’est jamais modifié.
 
-Chaque étudiant travaille **exclusivement dans son propre dossier**
-(`sites/site-<prenom>/`) et ne doit jamais modifier le dossier d'un autre
-site. Pour éviter tout conflit :
+`dist/` est ignoré par Git. Ne pas déployer cet artefact après la copie locale : un déploiement doit être construit à partir du `config.js` de production.
 
-- Toujours créer une branche dédiée avant de commencer à travailler sur son
-  site (`feature/site-fedi-navigation`, `feature/site-fedi-styles`, etc.),
-  jamais commit directement sur `main`.
-- Ouvrir une Pull Request vers `main` une fois la fonctionnalité prête,
-  avec des commits de taille raisonnable (une étape logique = un commit),
-  pour faciliter la review.
-- Toute modification touchant `packages/vanilla-engine/` (le framework
-  partagé) doit être discutée en équipe avant d'être poussée, car elle
-  impacte les 3 sites simultanément — contrairement au contenu de
-  `sites/site-xxx/`, qui n'engage que son propriétaire.
 
-## Avant tout déploiement en production
+# Production
+L'environnement local et la production est complètement séparés.
 
-Aucun site n'est autonome tel quel en développement : chacun référence
-`packages/vanilla-engine/` via un lien symbolique local, pratique pour
-développer mais **incompatible avec un déploiement en production**, où
-chaque site doit être isolé et ne jamais dépendre d'un dossier externe à
-lui-même.
+Pour accéder admin Strapi et sites en production:
 
-**Procédure obligatoire avant déploiement** :
+| Portfolio | Front | Back office |
+|---|---|---|
+| Aijing | https://portfolio-aijing.vercel.app | https://api-portfolio-aijing.aijing.li/admin |
+| Fedi | https://portfolio-fedi-two.vercel.app | https://api-portfolio-fedi.aijing.li/admin |
+| Azer | https://portfolio-azer.vercel.app | https://api-portfolio-azer.aijing.li/admin |
 
-1. Remplacer le lien symbolique par une vraie copie physique de
-   `packages/vanilla-engine/` dans `sites/site-xxx/vanilla-engine/`
-2. Vérifier que les imports restent cohérents (`./vanilla-engine/...`,
-   inchangés puisque déjà relatifs au dossier local)
-3. Ne déployer que ce dossier résultant, rendu autonome
 
-Cette étape doit être automatisée dans le pipeline CI/CD
-
-## Ajouter un nouveau site
+# Ajouter un nouveau site
 
 1. Créer `sites/site-<prenom>/` en suivant la structure ci-dessus
 2. S'inspirer de `site-fedi/` comme référence d'implémentation
