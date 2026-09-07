@@ -3,6 +3,7 @@ import Page404 from "../pages/not-found-page.js";
 import AboutMePage from "../pages/about-me.js";
 import ProjectsPage from "../pages/projects-page.js";
 import ProjectDetailPage from "../pages/project-detail-page.js";
+import PrivacyPage from "../pages/privacy-page.js";
 
 
 export default {
@@ -10,5 +11,6 @@ export default {
     "/about-me": AboutMePage,
     "/projects": ProjectsPage,
     "/projects/:slug": ProjectDetailPage,
+    "/privacy-page": PrivacyPage,
     "*": Page404,
 };

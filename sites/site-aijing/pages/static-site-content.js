@@ -50,8 +50,7 @@ export const footerContactCopy = {
   emailPlaceholder: "name@example.com",
   messageLabel: "Message",
   messagePlaceholder: "Write your message…",
-  consentLabel:
-    "I agree that the information entered will be used to contact me back.",
+  consentLabel: "I have read and understood the",
   submitLabel: "Send message",
   illustrationSrc: "/assets/images/send_message.png",
   illustrationWidth: 861,

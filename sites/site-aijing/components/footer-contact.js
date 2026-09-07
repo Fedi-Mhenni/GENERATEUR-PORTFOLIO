@@ -1,4 +1,5 @@
 import validateProps from "../vanilla-engine/src/validation/validate-props.js";
+import BrowserLink from "../vanilla-engine/src/router/link.js";
 import Button from "./button.js";
 import FormField from "./form-field.js";
 import SocialLink from "./social-link.js";
@@ -200,7 +201,13 @@ export default function FooterContact(props) {
               FormField({
                 id: `${prefix}-consent`,
                 name: "consent",
-                label: finalProps.consentLabel ?? "Consentement requis",
+                label: "Privacy Policy acknowledgement",
+                labelChildren: [
+                  finalProps.consentLabel ?? "I have read and understood the",
+                  " ",
+                  BrowserLink("/privacy-page", "Privacy Policy"),
+                  ".",
+                ],
                 type: "checkbox",
                 required: true,
               }),
