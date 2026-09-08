@@ -1,69 +1,39 @@
-## Objectif du projet
+# Générateur de portfolios
 
-Concevoir et piloter le développement d'un générateur de portfolio dynamique,
-en démontrant une maîtrise complète du cycle de vie projet : conception UI/UX,
-ingénierie frontend (framework maison), et pilotage (appels d'offres, risques,
-recette).
+Ce projet scolaire consiste à concevoir un générateur de portfolios web moderne et réutilisable.
+Il permet de mettre en valeur le parcours, les compétences et les projets de chaque étudiant à travers un site personnel.
 
-# Structure du projet
+L’architecture repose sur un CMS headless Strapi pour administrer les contenus (profil, expériences, projets et compétences), séparé du frontend.
+Les sites consomment ensuite ces données grâce à un framework frontend développé sur mesure dans le projet. Ce framework mutualise les briques essentielles, comme le rendu des pages, le routage, la gestion de l’état et des composants réutilisables.
+
+Trois portfolios indépendants ont été réalisés à partir de cette base commune. Chaque site conserve son identité visuelle et ses contenus propres, tout en profitant de la même architecture technique.
+
+# Structure de projet
 
 ```text
 GENERATEUR-PORTFOLIO/
-├── .github/
-│   └── workflows/
-│       ├── backend-deploy.yml        # Strapi → Render
-│       ├── sites-deploy.yml          # 3 fronts → Vercel (path-filtered)
-│       └── ci.yml                    # lint + tests on PR
-├── backend/                          # Strapi
-│   ├── src/api/                      # content-types, controllers
-│   ├── config/
-│   └── Dockerfile
+├── .github/workflows/          # Intégration continue et déploiements
+├── backend/                    # CMS headless Strapi et sa configuration
+│   ├── app/                    # Code source, types de contenu et API Strapi
+│   └── production/             # Configuration de mise en production
 ├── packages/
-│   └── vanilla-engine/               # Le framework
-│       ├── src/
-│       │   ├── core/                 # render engine (DOM/VDOM)
-│       │   ├── router/               # SPA router
-│       │   ├── state/                # reactive state management
-│       │   ├── components/           # composants réutilisables (header, footer, pagination)
-│       │   ├── validation/           # props validation
-│       │   ├── prototypes/           # String.interpolate, extensions natives
-│       │   └── index.js              # point d'entrée ES module
-│       └── tests/
-├── sites/                            # 3 workstreams individuels
-│   ├── site-etudiant1/
-│   │   ├── public/                   # index.html, assets
-│   │   ├── src/
-│   │   │   ├── templates/            # markup + bindings uniquement
-│   │   │   ├── pages/
-│   │   │   └── main.js
-│   │   ├── scss/                     # thème = couche CSS séparée
-│   │   └── vercel.json
-│   ├── site-etudiant2/
-│   └── site-etudiant3/
-├── package.json                      # npm workspaces (racine)
-└── README.md
+│   └── vanilla-engine/         # Framework frontend développé pour le projet
+├── sites/                      # Les trois portfolios indépendants
+│   ├── site-aijing/ 
+│   ├── site-fedi/  
+│   └── site-azer/ 
+├── scripts/                    # Scripts utilitaires de build
+└── README.md                   
 ```
 
-## Infrastructure de production (`infra/hosting-cicd-cdn`)
+Chaque portfolio possède ses propres pages, composants, styles, routes et
+services. Ils s’appuient tous sur `vanilla-engine` pour partager le même socle
+technique, tout en restant visuellement et fonctionnellement indépendants.
 
-Cette branche prépare l'hébergement de production des trois portfolios. Les
-frontends sont déployés par Vercel ; les trois APIs Strapi sont hébergées sur
-un VPS OVHcloud, derrière Nginx et HTTPS.
+# Liens de portfolios
 
-| Portfolio | Frontend public | API Strapi associée |
-| --- | --- | --- |
-| Aijing | `https://portfolio-aijing.vercel.app` | `https://api-portfolio-aijing.aijing.li/api` |
-| Fedi | `https://portfolio-fedi-two.vercel.app` | `https://api-portfolio-fedi.aijing.li/api` |
-| Azer | `https://portfolio-azer.vercel.app` | `https://api-portfolio-azer.aijing.li/api` |
+- [Portfolio d’Aijing](https://portfolio-aijing.vercel.app)
+- [Portfolio de Fedi](https://portfolio-fedi-two.vercel.app)
+- [Portfolio d’Azer](https://portfolio-azer.vercel.app)
 
-Nginx est le seul service qui expose les ports publics `80` et `443`. Les
-ports PostgreSQL (`5432`) et Strapi (`1337`) restent accessibles uniquement
-sur les réseaux Docker internes. Chaque instance Strapi possède sa propre
-base, son propre volume de médias et autorise uniquement son frontend Vercel
-via CORS.
-
-Les instructions de configuration du VPS, de Certbot, de Nginx, des variables
-d'environnement et du redéploiement sont dans
-[backend/production/README.md](backend/production/README.md). Les vrais
-fichiers `production/env/*.env` et les certificats Let's Encrypt ne sont jamais
-commités.
+Les détails techniques et les consignes de chaque partie du projet sont disponibles dans les README de leurs dossiers respectifs.
